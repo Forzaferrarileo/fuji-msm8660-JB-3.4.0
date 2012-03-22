@@ -13,7 +13,26 @@
 
 #include <linux/kernel.h>
 #include <linux/module.h>
+<<<<<<< HEAD
 #include <linux/platform_device.h>
+=======
+#include <linux/init.h>
+#include <linux/io.h>
+#include <linux/delay.h>
+#include <linux/mutex.h>
+#include <linux/err.h>
+#include <linux/errno.h>
+#include <linux/cpufreq.h>
+#include <linux/cpu.h>
+#include <linux/regulator/consumer.h>
+#include <linux/platform_device.h>
+
+#include <asm/mach-types.h>
+#include <asm/cpu.h>
+
+#include <mach/board.h>
+#include <mach/msm_iomap.h>
+>>>>>>> bf430eb... msm: acpuclock: Convert acpuclock drivers into platform drivers
 #include <mach/rpm-regulator.h>
 #include <mach/msm_bus_board.h>
 #include <mach/msm_bus.h>
@@ -219,8 +238,27 @@ static struct platform_driver acpuclk_8960_driver = {
 	},
 };
 
+<<<<<<< HEAD
+static int __init acpuclk_8960_init(void)
+=======
+static int __init acpuclk_8960_probe(struct platform_device *pdev)
+>>>>>>> bf430eb... msm: acpuclock: Convert acpuclock drivers into platform drivers
+{
+	return platform_driver_probe(&acpuclk_8960_driver, acpuclk_8960_probe);
+}
+<<<<<<< HEAD
+=======
+
+static struct platform_driver acpuclk_8960_driver = {
+	.driver = {
+		.name = "acpuclk-8960",
+		.owner = THIS_MODULE,
+	},
+};
+
 static int __init acpuclk_8960_init(void)
 {
 	return platform_driver_probe(&acpuclk_8960_driver, acpuclk_8960_probe);
 }
+>>>>>>> bf430eb... msm: acpuclock: Convert acpuclock drivers into platform drivers
 device_initcall(acpuclk_8960_init);

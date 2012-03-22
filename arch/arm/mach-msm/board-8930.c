@@ -2101,6 +2101,7 @@ static struct platform_device msm8930_device_rpm_regulator __devinitdata = {
 };
 
 static struct platform_device *common_devices[] __initdata = {
+	&msm8960_device_acpuclk,
 	&msm8960_device_dmov,
 	&msm_device_smd,
 	&msm8960_device_uart_gsbi5,

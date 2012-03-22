@@ -244,22 +244,28 @@ static struct acpuclk_pdata msm8625_acpuclk_pdata = {
 	.max_speed_delta_khz = 604800,
 };
 
+<<<<<<< HEAD
 static struct acpuclk_pdata msm8625ab_acpuclk_pdata = {
 	.max_speed_delta_khz = 801600,
 };
 
+=======
+>>>>>>> bf430eb... msm: acpuclock: Convert acpuclock drivers into platform drivers
 struct platform_device msm8625_device_acpuclk = {
 	.name		= "acpuclk-7627",
 	.id		= -1,
 	.dev.platform_data = &msm8625_acpuclk_pdata,
 };
 
+<<<<<<< HEAD
 struct platform_device msm8625ab_device_acpuclk = {
 	.name		= "acpuclk-7627",
 	.id		= -1,
 	.dev.platform_data = &msm8625ab_acpuclk_pdata,
 };
 
+=======
+>>>>>>> bf430eb... msm: acpuclock: Convert acpuclock drivers into platform drivers
 struct platform_device msm_device_smd = {
 	.name	= "msm_smd",
 	.id	= -1,
@@ -1946,6 +1952,7 @@ int __init msm7x2x_misc_init(void)
 			platform_device_register(&msm7x27aa_device_acpuclk);
 		else if (msm8625_cpu_id() == MSM8625A)
 			platform_device_register(&msm8625_device_acpuclk);
+<<<<<<< HEAD
 		else if (msm8625_cpu_id() == MSM8625AB)
 			platform_device_register(&msm8625ab_device_acpuclk);
 	} else {
@@ -1955,6 +1962,11 @@ int __init msm7x2x_misc_init(void)
 	if (cpu_is_msm8625() &&
 			(SOCINFO_VERSION_MAJOR(socinfo_get_version()) >= 2))
 		msm_cpr_init();
+=======
+	} else {
+		platform_device_register(&msm7x27a_device_acpuclk);
+	}
+>>>>>>> bf430eb... msm: acpuclock: Convert acpuclock drivers into platform drivers
 
 	return 0;
 }

@@ -210,6 +210,7 @@ struct platform_device msm8960_device_acpuclk = {
 	.id		= -1,
 };
 
+<<<<<<< HEAD
 static struct resource resources_uart_gsbi8[] = {
 	{
 		.start	= GSBI8_UARTDM_IRQ,
@@ -237,6 +238,8 @@ struct platform_device msm8960_device_uart_gsbi8 = {
 	.resource	= resources_uart_gsbi8,
 };
 
+=======
+>>>>>>> bf430eb... msm: acpuclock: Convert acpuclock drivers into platform drivers
 #define SHARED_IMEM_TZ_BASE 0x2a03f720
 static struct resource tzlog_resources[] = {
 	{

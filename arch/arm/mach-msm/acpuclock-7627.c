@@ -1203,4 +1203,7 @@ static int __init acpuclk_7627_init(void)
 	return platform_driver_register(&acpuclk_7627_driver);
 }
 postcore_initcall(acpuclk_7627_init);
+<<<<<<< HEAD
 
+=======
+>>>>>>> bf430eb... msm: acpuclock: Convert acpuclock drivers into platform drivers
