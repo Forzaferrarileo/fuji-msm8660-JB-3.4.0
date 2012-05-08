@@ -2649,12 +2649,7 @@ unsigned char hdmi_is_primary;
 #define USER_SMI_SIZE         (MSM_SMI_SIZE - KERNEL_SMI_SIZE)
 #define MSM_PMEM_SMIPOOL_SIZE USER_SMI_SIZE
 
-#ifdef CONFIG_MSM_CP
 #define MSM_ION_HOLE_SIZE	SZ_128K /* (128KB) */
-#else
-#define MSM_ION_HOLE_SIZE	0
-#endif
-
 #define MSM_MM_FW_SIZE		(0x200000 - MSM_ION_HOLE_SIZE) /*(2MB-128KB)*/
 #define MSM_ION_MM_SIZE		0x3800000  /* (56MB) */
 #define MSM_ION_MFC_SIZE	SZ_8K
@@ -2664,6 +2659,7 @@ unsigned char hdmi_is_primary;
 #define MSM_ION_MM_BASE		(MSM_ION_HOLE_BASE + MSM_ION_HOLE_SIZE)
 #define MSM_ION_MFC_BASE	(MSM_ION_MM_BASE + MSM_ION_MM_SIZE)
 
+<<<<<<< HEAD
 #ifdef CONFIG_MSM_CP
 #define SECURE_BASE	(MSM_ION_HOLE_BASE)
 #define SECURE_SIZE	(MSM_ION_MM_SIZE + MSM_ION_HOLE_SIZE)
@@ -2672,6 +2668,8 @@ unsigned char hdmi_is_primary;
 #define SECURE_SIZE	(MSM_ION_MM_SIZE + MSM_MM_FW_SIZE)
 #endif
 
+=======
+>>>>>>> fda5bc4... msm: board-8660: Adjust SMI heaps for CP-2.0
 #define MSM_ION_SF_SIZE		0x4000000 /* 64MB */
 #define MSM_ION_CAMERA_SIZE     MSM_PMEM_ADSP_SIZE
 
@@ -5392,8 +5390,13 @@ static struct ion_cp_heap_pdata cp_mm_ion_pdata = {
 	.request_region = request_smi_region,
 	.release_region = release_smi_region,
 	.setup_region = setup_smi_region,
+<<<<<<< HEAD
 	.secure_base = SECURE_BASE,
 	.secure_size = SECURE_SIZE,
+=======
+	.secure_base = MSM_ION_HOLE_BASE,
+	.secure_size = MSM_ION_HOLE_SIZE + MSM_ION_MM_SIZE,
+>>>>>>> fda5bc4... msm: board-8660: Adjust SMI heaps for CP-2.0
 	.iommu_map_all = 1,
 	.iommu_2x_map_domain = VIDEO_DOMAIN,
 };
@@ -5411,7 +5414,11 @@ static struct ion_cp_heap_pdata cp_wb_ion_pdata = {
 	.align = PAGE_SIZE,
 };
 
+<<<<<<< HEAD
 static struct ion_co_heap_pdata mm_fw_co_ion_pdata = {
+=======
+static struct ion_co_heap_pdata hole_co_ion_pdata = {
+>>>>>>> fda5bc4... msm: board-8660: Adjust SMI heaps for CP-2.0
 	.adjacent_mem_id = ION_CP_MM_HEAP_ID,
 };
 
@@ -5452,10 +5459,17 @@ struct ion_platform_heap msm8x60_heaps [] = {
 			.id	= ION_MM_FIRMWARE_HEAP_ID,
 			.type	= ION_HEAP_TYPE_CARVEOUT,
 			.name	= ION_MM_FIRMWARE_HEAP_NAME,
+<<<<<<< HEAD
 			.base	= MSM_MM_FW_BASE,
 			.size	= MSM_MM_FW_SIZE,
 			.memory_type = ION_SMI_TYPE,
 			.extra_data = (void *) &mm_fw_co_ion_pdata,
+=======
+			.base	= MSM_ION_HOLE_BASE,
+			.size	= MSM_ION_HOLE_SIZE,
+			.memory_type = ION_SMI_TYPE,
+			.extra_data = (void *) &hole_co_ion_pdata,
+>>>>>>> fda5bc4... msm: board-8660: Adjust SMI heaps for CP-2.0
 		},
 		{
 			.id	= ION_CP_MFC_HEAP_ID,
