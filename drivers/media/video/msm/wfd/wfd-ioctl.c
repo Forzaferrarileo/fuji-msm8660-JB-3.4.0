@@ -329,10 +329,8 @@ int wfd_allocate_input_buffers(struct wfd_device *wfd_dev,
 				(unsigned long *)&mdp_mregion->size, 0, 0);
 		}
 
-		if (rc || !mdp_mregion->paddr) {
-			WFD_MSG_ERR(
-				"Failed to map to mdp, rc = %d, paddr = 0x%p\n",
-				rc, mdp_mregion->paddr);
+		if (rc) {
+			WFD_MSG_ERR("Failed to map to mdp\n");
 			mdp_mregion->kvaddr = NULL;
 			mdp_mregion->paddr = NULL;
 			mdp_mregion->ion_handle = NULL;
