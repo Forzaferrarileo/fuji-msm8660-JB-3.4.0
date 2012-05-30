@@ -72,7 +72,6 @@
 #include <media/gpio-ir-recv.h>
 #include <mach/msm_pcie.h>
 #include <mach/restart.h>
-#include <mach/msm_iomap.h>
 
 #include "msm_watchdog.h"
 #include "board-8064.h"
