@@ -97,7 +97,6 @@ int hdmi_pll_enable(void)
 	unsigned int val;
 	u32 ahb_en_reg, ahb_enabled;
 	unsigned int timeout_count;
-	int pll_lock_retry = 10;
 
 	ahb_en_reg = readl_relaxed(AHB_EN_REG);
 	ahb_enabled = ahb_en_reg & BIT(4);
@@ -149,7 +148,7 @@ int hdmi_pll_enable(void)
 
 	timeout_count = 1000;
 	while (!(readl_relaxed(HDMI_PHY_PLL_STATUS0) & BIT(0)) &&
-			timeout_count && pll_lock_retry) {
+			timeout_count) {
 		if (--timeout_count == 0) {
 			/*
 			 * PLL has still not locked.
@@ -165,15 +164,12 @@ int hdmi_pll_enable(void)
 			 */
 			udelay(10);
 			writel_relaxed(0x0D, HDMI_PHY_PLL_LOCKDET_CFG2);
-
-			/*
-			 * Wait for a short duration for the PLL calibration
-			 * before checking if the PLL gets locked
-			 */
-			udelay(350);
-
 			timeout_count = 1000;
-			pll_lock_retry--;
+
+			pr_err("%s: PLL not locked after %d iterations\n",
+				__func__, timeout_count);
+			pr_err("%s: Asserting PLL S/W reset & trying again\n",
+				__func__);
 		}
 	}
 

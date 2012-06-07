@@ -4399,13 +4399,40 @@ static int hdmi_msm_hpd_on(void)
 
 	if (hdmi_msm_state->hpd_initialized) {
 		DEV_DBG("%s: HPD is already ON\n", __func__);
-	} else {
-		rc = hdmi_msm_state->pd->gpio_config(1);
-		if (rc) {
-			DEV_ERR("%s: Failed to enable GPIOs. Error=%d\n",
-					__func__, rc);
-			goto error1;
-		}
+		return 0;
+	}
+
+	rc = hdmi_msm_state->pd->gpio_config(1);
+	if (rc) {
+		DEV_ERR("%s: Failed to enable GPIOs. Error=%d\n",
+				__func__, rc);
+		goto error1;
+	}
+
+	rc = hdmi_msm_clk(1);
+	if (rc) {
+		DEV_ERR("%s: Failed to enable clocks. Error=%d\n",
+				__func__, rc);
+		goto error2;
+	}
+
+	rc = hdmi_msm_state->pd->enable_5v(1);
+	if (rc) {
+		DEV_ERR("%s: Failed to enable 5V regulator. Error=%d\n",
+				__func__, rc);
+		goto error3;
+	}
+	hdmi_msm_dump_regs("HDMI-INIT: ");
+	hdmi_msm_set_mode(FALSE);
+
+	if (!phy_reset_done) {
+		hdmi_phy_reset();
+		phy_reset_done = 1;
+	}
+	hdmi_msm_set_mode(TRUE);
+
+	/* HDMI_USEC_REFTIMER[0x0208] */
+	HDMI_OUTP(0x0208, 0x0001001B);
 
 		rc = hdmi_msm_clk(1);
 		if (rc) {
@@ -4446,19 +4473,6 @@ static int hdmi_msm_hpd_on(void)
 		DEV_DBG("%s: Setting HPD_CTRL=%d\n", __func__,
 				HDMI_INP(0x0254));
 
-		hdmi_msm_state->hpd_initialized = TRUE;
-
-		enable_irq(hdmi_msm_state->irq);
-
-		/* set timeout to 4.1ms (max) for hardware debounce */
-		hpd_ctrl = HDMI_INP(0x0258) | 0x1FFF;
-
-		/* Toggle HPD circuit to trigger HPD sense */
-		HDMI_OUTP(0x0258, ~(1 << 28) & hpd_ctrl);
-		HDMI_OUTP(0x0258, (1 << 28) | hpd_ctrl);
-	}
-
-	DEV_DBG("%s: (IRQ, 5V on)\n", __func__);
 	return 0;
 
 error3:
