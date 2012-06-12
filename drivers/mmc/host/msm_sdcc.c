@@ -2512,31 +2512,12 @@ static inline int msmsdcc_is_pwrsave(struct msmsdcc_host *host)
  */
 static int msmsdcc_setup_clocks(struct msmsdcc_host *host, bool enable)
 {
-	int rc = 0;
-
-	if (enable && !atomic_read(&host->clks_on)) {
-		if (!IS_ERR_OR_NULL(host->bus_clk)) {
-			rc = clk_prepare_enable(host->bus_clk);
-			if (rc) {
-				pr_err("%s: %s: failed to enable the bus-clock with error %d\n",
-					mmc_hostname(host->mmc), __func__, rc);
-				goto out;
-			}
-		}
-		if (!IS_ERR(host->pclk)) {
-			rc = clk_prepare_enable(host->pclk);
-			if (rc) {
-				pr_err("%s: %s: failed to enable the pclk with error %d\n",
-					mmc_hostname(host->mmc), __func__, rc);
-				goto disable_bus;
-			}
-		}
-		rc = clk_prepare_enable(host->clk);
-		if (rc) {
-			pr_err("%s: %s: failed to enable the host-clk with error %d\n",
-				mmc_hostname(host->mmc), __func__, rc);
-			goto disable_pclk;
-		}
+	if (enable) {
+		if (!IS_ERR_OR_NULL(host->bus_clk))
+			clk_prepare_enable(host->bus_clk);
+		if (!IS_ERR(host->pclk))
+			clk_prepare_enable(host->pclk);
+		clk_prepare_enable(host->clk);
 		mb();
 		msmsdcc_delay(host);
 		atomic_set(&host->clks_on, 1);
@@ -2548,7 +2529,6 @@ static int msmsdcc_setup_clocks(struct msmsdcc_host *host, bool enable)
 			clk_disable_unprepare(host->pclk);
 		if (!IS_ERR_OR_NULL(host->bus_clk))
 			clk_disable_unprepare(host->bus_clk);
-		atomic_set(&host->clks_on, 0);
 	}
 	goto out;
 
@@ -5725,7 +5705,7 @@ msmsdcc_probe(struct platform_device *pdev)
  bus_clk_put:
 	if (!IS_ERR_OR_NULL(host->bus_clk))
 		clk_put(host->bus_clk);
-	if (is_dma_mode(host)) {
+	if (host->is_dma_mode) {
 		if (host->dmares)
 			dma_free_coherent(NULL,
 				sizeof(struct msmsdcc_nc_dmadata),
