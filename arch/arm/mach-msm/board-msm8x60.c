@@ -2659,17 +2659,6 @@ unsigned char hdmi_is_primary;
 #define MSM_ION_MM_BASE		(MSM_ION_HOLE_BASE + MSM_ION_HOLE_SIZE)
 #define MSM_ION_MFC_BASE	(MSM_ION_MM_BASE + MSM_ION_MM_SIZE)
 
-<<<<<<< HEAD
-#ifdef CONFIG_MSM_CP
-#define SECURE_BASE	(MSM_ION_HOLE_BASE)
-#define SECURE_SIZE	(MSM_ION_MM_SIZE + MSM_ION_HOLE_SIZE)
-#else
-#define SECURE_BASE	(MSM_MM_FW_BASE)
-#define SECURE_SIZE	(MSM_ION_MM_SIZE + MSM_MM_FW_SIZE)
-#endif
-
-=======
->>>>>>> fda5bc4... msm: board-8660: Adjust SMI heaps for CP-2.0
 #define MSM_ION_SF_SIZE		0x4000000 /* 64MB */
 #define MSM_ION_CAMERA_SIZE     MSM_PMEM_ADSP_SIZE
 
@@ -5415,10 +5404,14 @@ static struct ion_cp_heap_pdata cp_wb_ion_pdata = {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 static struct ion_co_heap_pdata mm_fw_co_ion_pdata = {
 =======
 static struct ion_co_heap_pdata hole_co_ion_pdata = {
 >>>>>>> fda5bc4... msm: board-8660: Adjust SMI heaps for CP-2.0
+=======
+static struct ion_co_heap_pdata mm_fw_co_ion_pdata = {
+>>>>>>> 7c2b9cb... msm: board8660: Allocate proper size to MM_FW heap
 	.adjacent_mem_id = ION_CP_MM_HEAP_ID,
 };
 
@@ -5460,6 +5453,7 @@ struct ion_platform_heap msm8x60_heaps [] = {
 			.type	= ION_HEAP_TYPE_CARVEOUT,
 			.name	= ION_MM_FIRMWARE_HEAP_NAME,
 <<<<<<< HEAD
+<<<<<<< HEAD
 			.base	= MSM_MM_FW_BASE,
 			.size	= MSM_MM_FW_SIZE,
 			.memory_type = ION_SMI_TYPE,
@@ -5470,6 +5464,12 @@ struct ion_platform_heap msm8x60_heaps [] = {
 			.memory_type = ION_SMI_TYPE,
 			.extra_data = (void *) &hole_co_ion_pdata,
 >>>>>>> fda5bc4... msm: board-8660: Adjust SMI heaps for CP-2.0
+=======
+			.base	= MSM_MM_FW_BASE,
+			.size	= MSM_MM_FW_SIZE,
+			.memory_type = ION_SMI_TYPE,
+			.extra_data = (void *) &mm_fw_co_ion_pdata,
+>>>>>>> 7c2b9cb... msm: board8660: Allocate proper size to MM_FW heap
 		},
 		{
 			.id	= ION_CP_MFC_HEAP_ID,
