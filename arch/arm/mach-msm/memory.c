@@ -440,7 +440,41 @@ int release_fmem_c_region(void *unused)
 	return fmem_set_state(FMEM_T_STATE);
 }
 
-unsigned long get_ddr_size(void)
+static char * const memtype_names[] = {
+	[MEMTYPE_SMI_KERNEL] = "SMI_KERNEL",
+	[MEMTYPE_SMI]	= "SMI",
+	[MEMTYPE_EBI0] = "EBI0",
+	[MEMTYPE_EBI1] = "EBI1",
+};
+
+int msm_get_memory_type_from_name(const char *memtype_name)
+{
+	int i;
+
+	for (i = 0; i < ARRAY_SIZE(memtype_names); i++) {
+		if (memtype_names[i] &&
+		    strcmp(memtype_name, memtype_names[i]) == 0)
+			return i;
+	}
+
+	pr_err("Could not find memory type %s\n", memtype_name);
+	return -EINVAL;
+}
+
+static int reserve_memory_type(const char *mem_name,
+				struct memtype_reserve *reserve_table,
+				int size)
+{
+	int ret = msm_get_memory_type_from_name(mem_name);
+
+	if (ret >= 0) {
+		reserve_table[ret].size += size;
+		ret = 0;
+	}
+	return ret;
+}
+
+static int check_for_compat(unsigned long node)
 {
 	unsigned int i;
 	unsigned long ret = 0;

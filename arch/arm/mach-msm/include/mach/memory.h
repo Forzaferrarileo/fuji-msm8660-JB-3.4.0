@@ -78,7 +78,7 @@ void invalidate_caches(unsigned long, unsigned long, unsigned long);
 int platform_physical_remove_pages(u64, u64);
 int platform_physical_active_pages(u64, u64);
 int platform_physical_low_power_pages(u64, u64);
-unsigned long get_ddr_size(void);
+int msm_get_memory_type_from_name(const char *memtype_name);
 
 extern int (*change_memory_power)(u64, u64, int);
 
