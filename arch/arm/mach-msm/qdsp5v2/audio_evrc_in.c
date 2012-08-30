@@ -1343,6 +1343,7 @@ static int audevrc_in_open(struct inode *inode, struct file *file)
 		rc = -EBUSY;
 		goto done;
 	}
+<<<<<<< HEAD
 	audio->phys = allocate_contiguous_ebi_nomap(DMASZ, SZ_4K);
 	if (audio->phys) {
 		audio->map_v_read = ioremap(audio->phys, DMASZ);
@@ -1353,6 +1354,34 @@ static int audevrc_in_open(struct inode *inode, struct file *file)
 			goto done;
 		}
 		audio->data = audio->map_v_read;
+=======
+
+	client = msm_ion_client_create(UINT_MAX, "Audio_EVRC_in_client");
+	if (IS_ERR_OR_NULL(client)) {
+		MM_ERR("Unable to create ION client\n");
+		rc = -ENOMEM;
+		goto client_create_error;
+	}
+	audio->client = client;
+
+	MM_DBG("allocating mem sz = %d\n", DMASZ);
+	handle = ion_alloc(client, DMASZ, SZ_4K,
+		ION_HEAP(ION_AUDIO_HEAP_ID), 0);
+	if (IS_ERR_OR_NULL(handle)) {
+		MM_ERR("Unable to create allocate O/P buffers\n");
+		rc = -ENOMEM;
+		goto output_buff_alloc_error;
+	}
+
+	audio->output_buff_handle = handle;
+
+	rc = ion_phys(client , handle, &addr, &len);
+	if (rc) {
+		MM_ERR("O/P buffers:Invalid phy: %x sz: %x\n",
+			(unsigned int) addr, (unsigned int) len);
+		rc = -ENOMEM;
+		goto output_buff_get_phys_error;
+>>>>>>> 7d72bad... ion: Port heap mask change to ion
 	} else {
 		MM_ERR("could not allocate DMA buffers\n");
 		rc = -ENOMEM;
@@ -1414,10 +1443,18 @@ static int audevrc_in_open(struct inode *inode, struct file *file)
 	audevrc_in_flush(audio);
 	audevrc_out_flush(audio);
 
+<<<<<<< HEAD
 	audio->out_phys = allocate_contiguous_ebi_nomap(BUFFER_SIZE,
 								SZ_4K);
 	if (!audio->out_phys) {
 		MM_ERR("could not allocate write buffers\n");
+=======
+	MM_DBG("allocating BUFFER_SIZE  %d\n", BUFFER_SIZE);
+	handle = ion_alloc(client, BUFFER_SIZE,
+			SZ_4K, ION_HEAP(ION_AUDIO_HEAP_ID), 0);
+	if (IS_ERR_OR_NULL(handle)) {
+		MM_ERR("Unable to create allocate I/P buffers\n");
+>>>>>>> 7d72bad... ion: Port heap mask change to ion
 		rc = -ENOMEM;
 		goto evt_error;
 	} else {

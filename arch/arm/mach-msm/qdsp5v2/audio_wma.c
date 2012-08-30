@@ -1052,12 +1052,22 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 				MM_DBG("allocate PCM buffer %d\n",
 						config.buffer_count *
 						config.buffer_size);
+<<<<<<< HEAD
 				audio->read_phys =
 						allocate_contiguous_ebi_nomap(
 							config.buffer_size *
 							config.buffer_count,
 							SZ_4K);
 				if (!audio->read_phys) {
+=======
+				handle = ion_alloc(audio->client,
+					(config.buffer_size *
+					config.buffer_count),
+					SZ_4K, ION_HEAP(ION_AUDIO_HEAP_ID), 0);
+				if (IS_ERR_OR_NULL(handle)) {
+					MM_ERR("Unable to alloc I/P buffs\n");
+					audio->input_buff_handle = NULL;
+>>>>>>> 7d72bad... ion: Port heap mask change to ion
 					rc = -ENOMEM;
 					break;
 				}
@@ -1645,6 +1655,7 @@ static int audio_open(struct inode *inode, struct file *file)
 	}
 	audio->dec_id = decid & MSM_AUD_DECODER_MASK;
 
+<<<<<<< HEAD
 	while (pmem_sz >= DMASZ_MIN) {
 		MM_DBG("pmemsz = %d\n", pmem_sz);
 		audio->phys = allocate_contiguous_ebi_nomap(pmem_sz, SZ_4K);
@@ -1660,6 +1671,49 @@ static int audio_open(struct inode *inode, struct file *file)
 				kfree(audio);
 				goto done;
 			}
+=======
+	client = msm_ion_client_create(UINT_MAX, "Audio_WMA_Client");
+	if (IS_ERR_OR_NULL(client)) {
+		pr_err("Unable to create ION client\n");
+		rc = -ENOMEM;
+		goto client_create_error;
+	}
+	audio->client = client;
+
+	handle = ion_alloc(client, mem_sz, SZ_4K,
+		ION_HEAP(ION_AUDIO_HEAP_ID), 0);
+	if (IS_ERR_OR_NULL(handle)) {
+		MM_ERR("Unable to create allocate O/P buffers\n");
+		rc = -ENOMEM;
+		goto output_buff_alloc_error;
+	}
+	audio->output_buff_handle = handle;
+
+	rc = ion_phys(client, handle, &addr, &len);
+	if (rc) {
+		MM_ERR("O/P buffers:Invalid phy: %x sz: %x\n",
+			(unsigned int) addr, (unsigned int) len);
+		goto output_buff_get_phys_error;
+	} else {
+		MM_INFO("O/P buffers:valid phy: %x sz: %x\n",
+			(unsigned int) addr, (unsigned int) len);
+	}
+	audio->phys = (int32_t)addr;
+
+
+	rc = ion_handle_get_flags(client, handle, &ionflag);
+	if (rc) {
+		MM_ERR("could not get flags for the handle\n");
+		goto output_buff_get_flags_error;
+	}
+
+	audio->map_v_write = ion_map_kernel(client, handle, ionflag);
+	if (IS_ERR(audio->map_v_write)) {
+		MM_ERR("could not map write buffers\n");
+		rc = -ENOMEM;
+		goto output_buff_map_error;
+	}
+>>>>>>> 7d72bad... ion: Port heap mask change to ion
 			audio->data = audio->map_v_write;
 			MM_DBG("write buf: phy addr 0x%08x kernel addr \
 				0x%08x\n", audio->phys, (int)audio->data);

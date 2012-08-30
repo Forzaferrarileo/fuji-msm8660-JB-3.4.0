@@ -611,11 +611,34 @@ static int mdss_fb_alloc_fbmem(struct msm_fb_data_type *mfd)
 	size *= mfd->fb_page;
 
 	if (mfd->index == 0) {
-		virt = dma_alloc_coherent(NULL, size, (dma_addr_t *) &phys,
-				GFP_KERNEL);
-		if (!virt) {
-			pr_err("unable to alloc fb memory size=%u\n", size);
-			return -ENOMEM;
+
+		if (iclient) {
+			mfd->ihdl = ion_alloc(iclient, size, SZ_4K,
+					 ION_HEAP(ION_CP_MM_HEAP_ID) |
+					 ION_HEAP(ION_SF_HEAP_ID), 0);
+			if (IS_ERR_OR_NULL(mfd->ihdl)) {
+				pr_err("unable to alloc fbmem from ion (%p)\n",
+					mfd->ihdl);
+				return -ENOMEM;
+			}
+
+			virt = ion_map_kernel(iclient, mfd->ihdl, 0);
+			ion_phys(iclient, mfd->ihdl, &phys, &size);
+
+			if (is_mdss_iommu_attached()) {
+				ion_map_iommu(iclient, mfd->ihdl,
+					      mdss_get_iommu_domain(),
+					      0, SZ_4K, 0, &mfd->iova,
+					      (unsigned long *) &size,
+					      0, 0);
+			}
+		} else {
+			virt = dma_alloc_coherent(NULL, size,
+					(dma_addr_t *) &phys, GFP_KERNEL);
+			if (!virt) {
+				pr_err("unable to alloc fbmem size=%u\n", size);
+				return -ENOMEM;
+			}
 		}
 
 		pr_info("allocating %u bytes at %p (%lx phys) for fb %d\n",

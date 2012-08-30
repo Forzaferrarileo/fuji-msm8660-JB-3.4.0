@@ -395,8 +395,10 @@ int init_motion_buf(struct vcap_client_data *c_data)
 		return -ENOEXEC;
 	}
 
-	buf = kzalloc(size, GFP_KERNEL);
-	if (!buf)
+	handle = ion_alloc(dev->ion_client, size, SZ_4K,
+			ION_HEAP(ION_CP_MM_HEAP_ID), 0);
+	if (IS_ERR_OR_NULL(handle)) {
+		pr_err("%s: ion_alloc failed\n", __func__);
 		return -ENOMEM;
 
 	c_data->vid_vp_action.bufMotion = buf;
@@ -441,8 +443,10 @@ int init_nr_buf(struct vcap_client_data *c_data)
 	else
 		tot_size = frame_size / 2 * 3;
 
-	buf->vaddr = kzalloc(tot_size, GFP_KERNEL);
-	if (!buf)
+	handle = ion_alloc(dev->ion_client, tot_size, SZ_4K,
+			ION_HEAP(ION_CP_MM_HEAP_ID), 0);
+	if (IS_ERR_OR_NULL(handle)) {
+		pr_err("%s: ion_alloc failed\n", __func__);
 		return -ENOMEM;
 
 	buf->paddr = virt_to_phys(buf->vaddr);
@@ -476,6 +480,150 @@ void deinit_nr_buf(struct vcap_client_data *c_data)
 	buf->paddr = 0;
 	buf->vaddr = NULL;
 	return;
+}
+
+int nr_s_param(struct vcap_client_data *c_data, struct nr_param *param)
+{
+	if (param->mode != NR_MANUAL)
+		return 0;
+
+	/* Verify values in range */
+	if (param->window > VP_NR_MAX_WINDOW)
+		return -EINVAL;
+	if (param->luma.max_blend_ratio > VP_NR_MAX_RATIO)
+		return -EINVAL;
+	if (param->luma.scale_diff_ratio > VP_NR_MAX_RATIO)
+		return -EINVAL;
+	if (param->luma.diff_limit_ratio > VP_NR_MAX_RATIO)
+		return -EINVAL;
+	if (param->luma.scale_motion_ratio > VP_NR_MAX_RATIO)
+		return -EINVAL;
+	if (param->luma.blend_limit_ratio > VP_NR_MAX_RATIO)
+		return -EINVAL;
+	if (param->chroma.max_blend_ratio > VP_NR_MAX_RATIO)
+		return -EINVAL;
+	if (param->chroma.scale_diff_ratio > VP_NR_MAX_RATIO)
+		return -EINVAL;
+	if (param->chroma.diff_limit_ratio > VP_NR_MAX_RATIO)
+		return -EINVAL;
+	if (param->chroma.scale_motion_ratio > VP_NR_MAX_RATIO)
+		return -EINVAL;
+	if (param->chroma.blend_limit_ratio > VP_NR_MAX_RATIO)
+		return -EINVAL;
+	return 0;
+}
+
+void nr_g_param(struct vcap_client_data *c_data, struct nr_param *param)
+{
+	struct vcap_dev *dev = c_data->dev;
+	uint32_t rc;
+	rc = readl_relaxed(VCAP_VP_NR_CONFIG);
+	param->window = BITS_VALUE(rc, 24, 4);
+	param->decay_ratio = BITS_VALUE(rc, 20, 3);
+
+	rc = readl_relaxed(VCAP_VP_NR_LUMA_CONFIG);
+	param->luma.max_blend_ratio = BITS_VALUE(rc, 24, 4);
+	param->luma.scale_diff_ratio = BITS_VALUE(rc, 12, 4);
+	param->luma.diff_limit_ratio = BITS_VALUE(rc, 8, 4);
+	param->luma.scale_motion_ratio = BITS_VALUE(rc, 4, 4);
+	param->luma.blend_limit_ratio = BITS_VALUE(rc, 0, 4);
+
+	rc = readl_relaxed(VCAP_VP_NR_CHROMA_CONFIG);
+	param->chroma.max_blend_ratio = BITS_VALUE(rc, 24, 4);
+	param->chroma.scale_diff_ratio = BITS_VALUE(rc, 12, 4);
+	param->chroma.diff_limit_ratio = BITS_VALUE(rc, 8, 4);
+	param->chroma.scale_motion_ratio = BITS_VALUE(rc, 4, 4);
+	param->chroma.blend_limit_ratio = BITS_VALUE(rc, 0, 4);
+}
+
+void s_default_nr_val(struct nr_param *param)
+{
+	param->window = 10;
+	param->decay_ratio = 0;
+	param->luma.max_blend_ratio = 0;
+	param->luma.scale_diff_ratio = 4;
+	param->luma.diff_limit_ratio = 1;
+	param->luma.scale_motion_ratio = 4;
+	param->luma.blend_limit_ratio = 9;
+	param->chroma.max_blend_ratio = 0;
+	param->chroma.scale_diff_ratio = 4;
+	param->chroma.diff_limit_ratio = 1;
+	param->chroma.scale_motion_ratio = 4;
+	param->chroma.blend_limit_ratio = 9;
+}
+
+int vp_dummy_event(struct vcap_client_data *c_data)
+{
+	struct vcap_dev *dev = c_data->dev;
+	unsigned int width, height;
+	struct ion_handle *handle = NULL;
+	unsigned long paddr;
+	size_t len;
+	uint32_t reg;
+	int rc = 0;
+
+	dprintk(2, "%s: Start VP dummy event\n", __func__);
+	handle = ion_alloc(dev->ion_client, 0x1200, SZ_4K,
+			ION_HEAP(ION_CP_MM_HEAP_ID), 0);
+	if (IS_ERR_OR_NULL(handle)) {
+		pr_err("%s: ion_alloc failed\n", __func__);
+		return -ENOMEM;
+	}
+
+	rc = ion_phys(dev->ion_client, handle, &paddr, &len);
+	if (rc < 0) {
+		pr_err("%s: ion_phys failed\n", __func__);
+		ion_free(dev->ion_client, handle);
+		return rc;
+	}
+
+	width = c_data->vp_out_fmt.width;
+	height = c_data->vp_out_fmt.height;
+
+	c_data->vp_out_fmt.width = 0x3F;
+	c_data->vp_out_fmt.height = 0x16;
+
+	config_vp_format(c_data);
+	writel_relaxed(paddr, VCAP_VP_T1_Y_BASE_ADDR);
+	writel_relaxed(paddr + 0x2C0, VCAP_VP_T1_C_BASE_ADDR);
+	writel_relaxed(paddr + 0x440, VCAP_VP_T2_Y_BASE_ADDR);
+	writel_relaxed(paddr + 0x700, VCAP_VP_T2_C_BASE_ADDR);
+	writel_relaxed(paddr + 0x880, VCAP_VP_OUT_Y_BASE_ADDR);
+	writel_relaxed(paddr + 0xB40, VCAP_VP_OUT_C_BASE_ADDR);
+	writel_iowmb(paddr + 0x1100, VCAP_VP_MOTION_EST_ADDR);
+	writel_relaxed(4 << 20 | 0x2 << 4, VCAP_VP_IN_CONFIG);
+	writel_relaxed(4 << 20 | 0x1 << 4, VCAP_VP_OUT_CONFIG);
+
+	dev->vp_dummy_event = true;
+
+	enable_irq(dev->vpirq->start);
+	writel_relaxed(0x01100101, VCAP_VP_INTERRUPT_ENABLE);
+	writel_iowmb(0x00000000, VCAP_VP_CTRL);
+	writel_iowmb(0x00010000, VCAP_VP_CTRL);
+
+	rc = wait_event_interruptible_timeout(dev->vp_dummy_waitq,
+		dev->vp_dummy_complete, msecs_to_jiffies(50));
+	if (!rc && !dev->vp_dummy_complete) {
+		pr_err("%s: VP dummy event timeout", __func__);
+		rc = -ETIME;
+
+		vp_sw_reset(dev);
+		dev->vp_dummy_complete = false;
+	}
+
+	writel_relaxed(0x00000000, VCAP_VP_INTERRUPT_ENABLE);
+	disable_irq(dev->vpirq->start);
+	dev->vp_dummy_event = false;
+
+	reg = readl_relaxed(VCAP_OFFSET(0x0D94));
+	writel_relaxed(reg, VCAP_OFFSET(0x0D9C));
+
+	c_data->vp_out_fmt.width = width;
+	c_data->vp_out_fmt.height = height;
+	ion_free(dev->ion_client, handle);
+
+	dprintk(2, "%s: Exit VP dummy event\n", __func__);
+	return rc;
 }
 
 int kickoff_vp(struct vcap_client_data *c_data)
