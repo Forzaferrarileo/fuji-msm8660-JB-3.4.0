@@ -1071,10 +1071,45 @@ static long audio_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 					rc = -ENOMEM;
 					break;
 				}
+<<<<<<< HEAD
 				audio->map_v_read = ioremap(
 							audio->read_phys,
 							config.buffer_size *
 							config.buffer_count);
+=======
+
+				audio->input_buff_handle = handle;
+
+				rc = ion_phys(audio->client ,
+					handle, &addr, &len);
+				if (rc) {
+					MM_ERR("Invalid phy: %x sz: %x\n",
+						(unsigned int) addr,
+						(unsigned int) len);
+					ion_free(audio->client, handle);
+					audio->input_buff_handle = NULL;
+					rc = -ENOMEM;
+					break;
+				} else {
+					MM_INFO("Got valid phy: %x sz: %x\n",
+						(unsigned int) audio->read_phys,
+						(unsigned int) len);
+				}
+				audio->read_phys = (int32_t)addr;
+
+				rc = ion_handle_get_flags(audio->client,
+					handle, &ionflag);
+				if (rc) {
+					MM_ERR("could not get flags\n");
+					ion_free(audio->client, handle);
+					audio->input_buff_handle = NULL;
+					rc = -ENOMEM;
+					break;
+				}
+
+				audio->map_v_read = ion_map_kernel(
+					audio->client, handle);
+>>>>>>> 911b4b7... ion: change ion kernel map function to not take flags argument
 				if (IS_ERR(audio->map_v_read)) {
 					MM_ERR("read buf alloc fail\n");
 					rc = -ENOMEM;
@@ -1707,7 +1742,7 @@ static int audio_open(struct inode *inode, struct file *file)
 		goto output_buff_get_flags_error;
 	}
 
-	audio->map_v_write = ion_map_kernel(client, handle, ionflag);
+	audio->map_v_write = ion_map_kernel(client, handle);
 	if (IS_ERR(audio->map_v_write)) {
 		MM_ERR("could not map write buffers\n");
 		rc = -ENOMEM;

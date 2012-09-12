@@ -822,7 +822,24 @@ static int audamrnb_in_open(struct inode *inode, struct file *file)
 		goto buff_get_phys_error;
 >>>>>>> 7d72bad... ion: Port heap mask change to ion
 	} else {
+<<<<<<< HEAD
 		MM_ERR("could not allocate DMA buffers\n");
+=======
+		MM_INFO("O/P buffers:valid phy: %x sz: %x\n",
+			(unsigned int) addr, (unsigned int) len);
+	}
+	audio->phys = (int32_t)addr;
+
+	rc = ion_handle_get_flags(client, handle, &ionflag);
+	if (rc) {
+		MM_ERR("could not get flags for the handle\n");
+		goto buff_get_flags_error;
+	}
+
+	audio->map_v_read = ion_map_kernel(client, handle);
+	if (IS_ERR(audio->map_v_read)) {
+		MM_ERR("could not map write buffers\n");
+>>>>>>> 911b4b7... ion: change ion kernel map function to not take flags argument
 		rc = -ENOMEM;
 		goto done;
 	}

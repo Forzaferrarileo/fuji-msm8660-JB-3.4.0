@@ -92,10 +92,25 @@ static int alloc_ion_mem(struct smem_client *client, size_t size,
 	}
 	mem->mem_type = client->mem_type;
 	mem->smem_priv = hndl;
-	if (ion_phys(client->clnt, hndl, &mem->paddr, &len)) {
-		pr_err("Failed to get physical address\n");
-		rc = -EIO;
-		goto fail_map;
+	mem->domain = domain;
+	mem->partition_num = partition;
+	if (map_kernel) {
+		mem->kvaddr = ion_map_kernel(client->clnt, hndl);
+		if (!mem->kvaddr) {
+			dprintk(VIDC_ERR,
+				"Failed to map shared mem in kernel\n");
+			rc = -EIO;
+			goto fail_map;
+		}
+	} else
+		mem->kvaddr = NULL;
+
+	rc = get_device_address(client->clnt, hndl, mem->domain,
+		mem->partition_num, align, &iova, &buffer_size, UNCACHED);
+	if (rc) {
+		dprintk(VIDC_ERR, "Failed to get device address: %d\n",
+			rc);
+		goto fail_device_address;
 	}
 	mem->device_addr = mem->paddr;
 	mem->size = size;

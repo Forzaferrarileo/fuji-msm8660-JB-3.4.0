@@ -86,8 +86,8 @@ struct mdss_mdp_data *mdss_mdp_wb_debug_buffer(struct msm_fb_data_type *mfd)
 			return NULL;
 		}
 
-	buffer.p[0].addr = fbi->fix.smem_start + offset;
-	buffer.p[0].len = img_size;
+		videomemory = ion_map_kernel(iclient, ihdl);
+		ion_phys(iclient, ihdl, &mdss_wb_mem, &img_size);
 
 	return &buffer;
 }

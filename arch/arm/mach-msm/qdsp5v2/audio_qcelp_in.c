@@ -1390,7 +1390,19 @@ static int audqcelp_in_open(struct inode *inode, struct file *file)
 	} else {
 		MM_ERR("could not allocate DMA buffers\n");
 		rc = -ENOMEM;
+<<<<<<< HEAD
 		goto done;
+=======
+		goto output_buff_get_flags_error;
+	}
+
+	audio->map_v_read = ion_map_kernel(client, handle);
+	if (IS_ERR(audio->map_v_read)) {
+		MM_ERR("could not map read buffers,freeing instance 0x%08x\n",
+				(int)audio);
+		rc = -ENOMEM;
+		goto output_buff_map_error;
+>>>>>>> 911b4b7... ion: change ion kernel map function to not take flags argument
 	}
 	MM_DBG("Memory addr = 0x%8x  phy addr = 0x%8x\n",\
 		(int) audio->data, (int) audio->phys);
@@ -1464,6 +1476,7 @@ static int audqcelp_in_open(struct inode *inode, struct file *file)
 		rc = -ENOMEM;
 		goto evt_error;
 	} else {
+<<<<<<< HEAD
 		audio->map_v_write = ioremap(audio->out_phys, BUFFER_SIZE);
 		if (IS_ERR(audio->map_v_write)) {
 			MM_ERR("could not map write buffers\n");
@@ -1474,6 +1487,27 @@ static int audqcelp_in_open(struct inode *inode, struct file *file)
 		audio->out_data = audio->map_v_write;
 		MM_DBG("write buf: phy addr 0x%08x kernel addr 0x%08x\n",
 				audio->out_phys, (int)audio->out_data);
+=======
+		MM_INFO("Got valid phy: %x sz: %x\n",
+			(unsigned int) addr,
+			(unsigned int) len);
+	}
+	audio->out_phys = (int32_t)addr;
+
+	rc = ion_handle_get_flags(client,
+		handle, &ionflag);
+	if (rc) {
+		MM_ERR("could not get flags for the handle\n");
+		rc = -ENOMEM;
+		goto input_buff_alloc_error;
+	}
+
+	audio->map_v_write = ion_map_kernel(client, handle);
+	if (IS_ERR(audio->map_v_write)) {
+		MM_ERR("could not map write buffers\n");
+		rc = -ENOMEM;
+		goto input_buff_map_error;
+>>>>>>> 911b4b7... ion: change ion kernel map function to not take flags argument
 	}
 
 		/* Initialize buffer */

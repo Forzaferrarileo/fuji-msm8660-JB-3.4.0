@@ -401,9 +401,21 @@ int init_motion_buf(struct vcap_client_data *c_data)
 		pr_err("%s: ion_alloc failed\n", __func__);
 		return -ENOMEM;
 
-	c_data->vid_vp_action.bufMotion = buf;
-	motion_base_addr = virt_to_phys(buf);
-	writel_iowmb(motion_base_addr, VCAP_VP_MOTION_EST_ADDR);
+	vaddr = ion_map_kernel(dev->ion_client, handle);
+	if (IS_ERR(vaddr)) {
+		pr_err("%s: Map motion buffer failed\n", __func__);
+		ion_free(dev->ion_client, handle);
+		rc = -ENOMEM;
+		return rc;
+	}
+
+	memset(vaddr, 0, size);
+	c_data->vp_action.motionHandle = handle;
+
+	vaddr = NULL;
+	ion_unmap_kernel(dev->ion_client, handle);
+
+	writel_iowmb(paddr, VCAP_VP_MOTION_EST_ADDR);
 	return 0;
 }
 

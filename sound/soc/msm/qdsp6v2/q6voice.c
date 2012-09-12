@@ -3844,7 +3844,12 @@ static int __init voice_init(void)
 		goto err_ion_handle;
 	}
 
-	memset(&common, 0, sizeof(struct common_data));
+	mem_addr = ion_map_kernel(v->shmem_info.sh_buf.client,
+				  v->shmem_info.sh_buf.handle);
+	if (IS_ERR_OR_NULL(mem_addr)) {
+		pr_err("%s: ION memory mapping failed\n", __func__);
+		goto err_ion_handle;
+	}
 
 	/* Allocate memory for VoIP calibration */
 	common.client = msm_ion_client_create(UINT_MAX, "voip_client");
@@ -3880,13 +3885,12 @@ static int __init voice_init(void)
 		goto cont;
 	}
 
-	common.cvs_cal.buf = ion_map_kernel(common.client,
-					common.cvs_cal.handle, 0);
-	if (IS_ERR_OR_NULL((void *) common.cvs_cal.buf)) {
-		pr_err("%s: ION memory mapping for cvs failed\n", __func__);
-		common.cvs_cal.buf = NULL;
-		ion_free(common.client, common.cvs_cal.handle);
-		goto cont;
+	v->shmem_info.memtbl.data = ion_map_kernel(v->shmem_info.memtbl.client,
+						   v->shmem_info.memtbl.handle);
+	if (IS_ERR_OR_NULL((void *)v->shmem_info.memtbl.data)) {
+		pr_err("%s: ION memory mapping for memtbl failed\n",
+				__func__);
+		goto err_ion_handle;
 	}
 	memset((void *)common.cvs_cal.buf, 0, CVS_CAL_SIZE);
 cont:
