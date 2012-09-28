@@ -12,6 +12,12 @@
 
 /dts-v1/;
 /include/ "skeleton.dtsi"
+<<<<<<< HEAD:arch/arm/boot/dts/msm9625.dts
+=======
+/include/ "mpq8092-iommu.dtsi"
+/include/ "msm-gdsc.dtsi"
+/include/ "mpq8092-ion.dtsi"
+>>>>>>> 4bb9465... arm/dt: mpq8092: Add device tree support for ION:arch/arm/boot/dts/mpq8092.dtsi
 
 / {
 	model = "Qualcomm MSM 9625";
