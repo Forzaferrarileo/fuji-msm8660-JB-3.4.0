@@ -50,6 +50,7 @@
 #include "modem_notifier.h"
 #include "lpm_resources.h"
 
+<<<<<<< HEAD
 #define MSM_KERNEL_EBI1_MEM_SIZE	0x280000
 #ifdef CONFIG_FB_MSM_HDMI_AS_PRIMARY
 #define MSM_ION_SF_SIZE 0x4000000 /* 64 Mbytes */
@@ -72,6 +73,8 @@ static int __init kernel_ebi1_mem_size_setup(char *p)
 }
 early_param("kernel_ebi1_mem_size", kernel_ebi1_mem_size_setup);
 #endif
+=======
+>>>>>>> 6ae3ae4... msm: move memory reservation for 8974 into the device tree
 
 static struct memtype_reserve msm_8974_reserve_table[] __initdata = {
 	[MEMTYPE_SMI] = {
@@ -93,6 +96,7 @@ static int msm8974_paddr_to_memtype(phys_addr_t paddr)
 	return MEMTYPE_EBI1;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_ION_MSM
 static struct ion_cp_heap_pdata cp_mm_ion_pdata = {
 	.permission_type = IPT_TYPE_MM_CARVEOUT,
@@ -209,6 +213,8 @@ static void __init reserve_ion_memory(void)
 }
 #endif
 
+=======
+>>>>>>> 6ae3ae4... msm: move memory reservation for 8974 into the device tree
 static struct resource smd_resource[] = {
 	{
 		.name	= "modem_smd_in",
@@ -371,6 +377,7 @@ struct platform_device msm_device_smd_8974 = {
 	}
 };
 
+<<<<<<< HEAD
 static void __init msm_8974_calculate_reserve_sizes(void)
 {
 #ifdef CONFIG_ION_MSM
@@ -382,6 +389,11 @@ static struct reserve_info msm_8974_reserve_info __initdata = {
 	.memtype_reserve_table = msm_8974_reserve_table,
 	.calculate_reserve_sizes = msm_8974_calculate_reserve_sizes,
 	.paddr_to_memtype = msm_8974_paddr_to_memtype,
+=======
+static struct reserve_info msm8974_reserve_info __initdata = {
+	.memtype_reserve_table = msm8974_reserve_table,
+	.paddr_to_memtype = msm8974_paddr_to_memtype,
+>>>>>>> 6ae3ae4... msm: move memory reservation for 8974 into the device tree
 };
 
 static void __init msm_8974_early_memory(void)
