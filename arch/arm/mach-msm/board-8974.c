@@ -396,10 +396,24 @@ static struct reserve_info msm8974_reserve_info __initdata = {
 >>>>>>> 6ae3ae4... msm: move memory reservation for 8974 into the device tree
 };
 
+<<<<<<< HEAD
 static void __init msm_8974_early_memory(void)
 {
 	reserve_info = &msm_8974_reserve_info;
 	of_scan_flat_dt(dt_scan_for_memory_reserve, msm_8974_reserve_table);
+=======
+void __init msm_8974_reserve(void)
+{
+	reserve_info = &msm8974_reserve_info;
+	of_scan_flat_dt(dt_scan_for_memory_reserve, msm8974_reserve_table);
+	msm_reserve();
+}
+
+static void __init msm8974_early_memory(void)
+{
+	reserve_info = &msm8974_reserve_info;
+	of_scan_flat_dt(dt_scan_for_memory_hole, msm8974_reserve_table);
+>>>>>>> 1b2cb55... msm: 8974: Enable DONT_MAP_HOLE_AFTER_MEMBANK0
 }
 
 void __init msm_8974_reserve(void)
@@ -673,3 +687,23 @@ void __init msm_8974_very_early(void)
 {
 	msm_8974_early_memory();
 }
+<<<<<<< HEAD
+=======
+
+static const char *msm8974_dt_match[] __initconst = {
+	"qcom,msm8974",
+	NULL
+};
+
+DT_MACHINE_START(MSM8974_DT, "Qualcomm MSM 8974 (Flattened Device Tree)")
+	.map_io = msm8974_map_io,
+	.init_irq = msm_dt_init_irq,
+	.init_machine = msm8974_init,
+	.handle_irq = gic_handle_irq,
+	.timer = &msm_dt_timer,
+	.dt_compat = msm8974_dt_match,
+	.reserve = msm_8974_reserve,
+	.init_very_early = msm8974_init_very_early,
+	.restart = msm_restart,
+MACHINE_END
+>>>>>>> 1b2cb55... msm: 8974: Enable DONT_MAP_HOLE_AFTER_MEMBANK0

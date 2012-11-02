@@ -259,6 +259,8 @@ config ARCH_MSM8974
 	select MSM_AUDIO_QDSP6V2 if SND_SOC
 	select MSM_RPM_REGULATOR_SMD
 	select ARM_HAS_SG_CHAIN
+<<<<<<< HEAD
+=======
 	select MSM_RUN_QUEUE_STATS
 	select MEMORY_HOLE_CARVEOUT
 	select MSM_RPM_STATS_LOG
@@ -276,6 +278,7 @@ config ARCH_MPQ8092
 	select MAY_HAVE_SPARSE_IRQ
 	select SPARSE_IRQ
 	select MSM_NOPM
+>>>>>>> 1b2cb55... msm: 8974: Enable DONT_MAP_HOLE_AFTER_MEMBANK0
 
 config ARCH_FSM9XXX
 	bool "FSM9XXX"
