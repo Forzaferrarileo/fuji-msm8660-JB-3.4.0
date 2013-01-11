@@ -282,10 +282,13 @@ static struct ion_cp_heap_pdata cp_mm_apq8064_ion_pdata = {
 	.mem_is_fmem = FMEM_ENABLED,
 	.fixed_position = FIXED_MIDDLE,
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	.is_cma = 1,
 	.no_nonsecure_alloc = 1,
 >>>>>>> ac96331... gpu: ion: Restrict access to CP heap
+=======
+>>>>>>> 345f023... gpu: ion: Disallow non-secure allocations from the CP heap
 };
 
 static struct ion_cp_heap_pdata cp_mfc_apq8064_ion_pdata = {
@@ -294,7 +297,6 @@ static struct ion_cp_heap_pdata cp_mfc_apq8064_ion_pdata = {
 	.reusable = 0,
 	.mem_is_fmem = FMEM_ENABLED,
 	.fixed_position = FIXED_HIGH,
-	.no_nonsecure_alloc = 1,
 };
 
 static struct ion_co_heap_pdata co_apq8064_ion_pdata = {
