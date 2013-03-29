@@ -162,38 +162,6 @@ int ion_carveout_heap_map_user(struct ion_heap *heap, struct ion_buffer *buffer,
 	return ret_value;
 }
 
-int ion_carveout_cache_ops(struct ion_heap *heap, struct ion_buffer *buffer,
-			void *vaddr, unsigned int offset, unsigned int length,
-			unsigned int cmd)
-{
-	void (*outer_cache_op)(phys_addr_t, phys_addr_t);
-	struct ion_carveout_heap *carveout_heap =
-	     container_of(heap, struct  ion_carveout_heap, heap);
-
-	switch (cmd) {
-	case ION_IOC_CLEAN_CACHES:
-		dmac_clean_range(vaddr, vaddr + length);
-		outer_cache_op = outer_clean_range;
-		break;
-	case ION_IOC_INV_CACHES:
-		dmac_inv_range(vaddr, vaddr + length);
-		outer_cache_op = outer_inv_range;
-		break;
-	case ION_IOC_CLEAN_INV_CACHES:
-		dmac_flush_range(vaddr, vaddr + length);
-		outer_cache_op = outer_flush_range;
-		break;
-	default:
-		return -EINVAL;
-	}
-
-	if (carveout_heap->has_outer_cache) {
-		unsigned long pstart = buffer->priv_phys + offset;
-		outer_cache_op(pstart, pstart + length);
-	}
-	return 0;
-}
-
 static int ion_carveout_print_debug(struct ion_heap *heap, struct seq_file *s,
 				    const struct rb_root *mem_map)
 {
@@ -257,7 +225,6 @@ static struct ion_heap_ops carveout_heap_ops = {
 	.unmap_kernel = ion_carveout_heap_unmap_kernel,
 	.map_dma = ion_carveout_heap_map_dma,
 	.unmap_dma = ion_carveout_heap_unmap_dma,
-	.cache_op = ion_carveout_cache_ops,
 	.print_debug = ion_carveout_print_debug,
 };
 
