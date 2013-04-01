@@ -42,6 +42,9 @@
 #define IOMMU_SECURE_PTBL_INIT  4
 #define IOMMU_SECURE_MAP	6
 #define IOMMU_SECURE_UNMAP      7
+#define IOMMU_SECURE_MAP2 0x0B
+#define IOMMU_SECURE_UNMAP2 0x0C
+#define IOMMU_TLBINVAL_FLAG 0x00000001
 
 static DEFINE_MUTEX(msm_iommu_lock);
 
@@ -62,9 +65,15 @@ struct msm_scm_mapping_info {
 	unsigned int size;
 };
 
-struct msm_scm_map_req {
+struct msm_scm_map2_req {
 	struct msm_scm_paddr_list plist;
 	struct msm_scm_mapping_info info;
+	unsigned int flags;
+};
+
+struct msm_scm_unmap2_req {
+	struct msm_scm_mapping_info info;
+	unsigned int flags;
 };
 
 static int msm_iommu_sec_ptbl_init(void)
@@ -156,7 +165,7 @@ static int msm_iommu_sec_ptbl_map(struct msm_iommu_drvdata *iommu_drvdata,
 			struct msm_iommu_ctx_drvdata *ctx_drvdata,
 			unsigned long va, phys_addr_t pa, size_t len)
 {
-	struct msm_scm_map_req map;
+	struct msm_scm_map2_req map;
 	int ret = 0;
 
 	map.plist.list = virt_to_phys(&pa);
@@ -166,8 +175,9 @@ static int msm_iommu_sec_ptbl_map(struct msm_iommu_drvdata *iommu_drvdata,
 	map.info.ctx_id = ctx_drvdata->num;
 	map.info.va = va;
 	map.info.size = len;
+	map.flags = IOMMU_TLBINVAL_FLAG;
 
-	if (scm_call(SCM_SVC_MP, IOMMU_SECURE_MAP, &map, sizeof(map), &ret,
+	if (scm_call(SCM_SVC_MP, IOMMU_SECURE_MAP2, &map, sizeof(map), &ret,
 								sizeof(ret)))
 		return -EINVAL;
 	if (ret)
@@ -194,7 +204,7 @@ static int msm_iommu_sec_ptbl_map_range(struct msm_iommu_drvdata *iommu_drvdata,
 			unsigned long va, struct scatterlist *sg, size_t len)
 {
 	struct scatterlist *sgiter;
-	struct msm_scm_map_req map;
+	struct msm_scm_map2_req map;
 	unsigned int *pa_list = 0;
 	unsigned int pa, cnt;
 	unsigned int offset = 0, chunk_offset = 0;
@@ -204,6 +214,7 @@ static int msm_iommu_sec_ptbl_map_range(struct msm_iommu_drvdata *iommu_drvdata,
 	map.info.ctx_id = ctx_drvdata->num;
 	map.info.va = va;
 	map.info.size = len;
+	map.flags = IOMMU_TLBINVAL_FLAG;
 
 	if (sg->length == len) {
 		pa = get_phys_addr(sg);
@@ -242,7 +253,7 @@ static int msm_iommu_sec_ptbl_map_range(struct msm_iommu_drvdata *iommu_drvdata,
 		map.plist.size = SZ_1M;
 	}
 
-	ret = scm_call(SCM_SVC_MP, IOMMU_SECURE_MAP, &map, sizeof(map),
+	ret = scm_call(SCM_SVC_MP, IOMMU_SECURE_MAP2, &map, sizeof(map),
 			&scm_ret, sizeof(scm_ret));
 	kfree(pa_list);
 	return ret;
@@ -252,15 +263,16 @@ static int msm_iommu_sec_ptbl_unmap(struct msm_iommu_drvdata *iommu_drvdata,
 			struct msm_iommu_ctx_drvdata *ctx_drvdata,
 			unsigned long va, size_t len)
 {
-	struct msm_scm_mapping_info mi;
+	struct msm_scm_unmap2_req unmap;
 	int ret, scm_ret;
 
-	mi.id = iommu_drvdata->sec_id;
-	mi.ctx_id = ctx_drvdata->num;
-	mi.va = va;
-	mi.size = len;
+	unmap.info.id = iommu_drvdata->sec_id;
+	unmap.info.ctx_id = ctx_drvdata->num;
+	unmap.info.va = va;
+	unmap.info.size = len;
+	unmap.flags = IOMMU_TLBINVAL_FLAG;
 
-	ret = scm_call(SCM_SVC_MP, IOMMU_SECURE_UNMAP, &mi, sizeof(mi),
+	ret = scm_call(SCM_SVC_MP, IOMMU_SECURE_UNMAP2, &unmap, sizeof(unmap),
 			&scm_ret, sizeof(scm_ret));
 	return ret;
 }
