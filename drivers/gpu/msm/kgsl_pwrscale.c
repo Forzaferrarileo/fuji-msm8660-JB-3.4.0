@@ -252,7 +252,9 @@ void kgsl_pwrscale_idle(struct kgsl_device *device)
 			device->requested_state != KGSL_STATE_SLEEP)
 			device->pwrscale.policy->idle(device,
 					&device->pwrscale);
+
 	device->pwrscale.gpu_busy = 0;
+
 }
 EXPORT_SYMBOL(kgsl_pwrscale_idle);
 

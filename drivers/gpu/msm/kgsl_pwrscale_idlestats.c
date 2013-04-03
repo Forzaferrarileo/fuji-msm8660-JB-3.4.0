@@ -132,6 +132,7 @@ static void idlestats_busy(struct kgsl_device *device,
 
 static void idlestats_idle(struct kgsl_device *device,
 			struct kgsl_pwrscale *pwrscale)
+
 {
 	int i, nr_cpu;
 	struct idlestats_priv *priv = pwrscale->priv;
