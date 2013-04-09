@@ -229,6 +229,7 @@ static void __init reserve_rtb_memory(void)
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 static void __init size_pmem_devices(void)
 {
@@ -263,6 +264,9 @@ static void __init reserve_pmem_memory(void)
 }
 
 static int apq8064_paddr_to_memtype(unsigned int paddr)
+=======
+static int apq8064_paddr_to_memtype(phys_addr_t paddr)
+>>>>>>> 938d750... msm: memory: Use phys_addr_t for memory reservation code
 =======
 static int apq8064_paddr_to_memtype(phys_addr_t paddr)
 >>>>>>> 938d750... msm: memory: Use phys_addr_t for memory reservation code

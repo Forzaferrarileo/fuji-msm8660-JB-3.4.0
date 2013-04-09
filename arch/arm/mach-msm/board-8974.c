@@ -88,7 +88,11 @@ static struct memtype_reserve msm_8974_reserve_table[] __initdata = {
 };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 static int msm_8974_paddr_to_memtype(unsigned int paddr)
+=======
+static int msm8974_paddr_to_memtype(phys_addr_t paddr)
+>>>>>>> 938d750... msm: memory: Use phys_addr_t for memory reservation code
 =======
 static int msm8974_paddr_to_memtype(phys_addr_t paddr)
 >>>>>>> 938d750... msm: memory: Use phys_addr_t for memory reservation code

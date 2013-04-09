@@ -245,6 +245,7 @@ static void __init reserve_rtb_memory(void)
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 static void __init size_pmem_devices(void)
 {
 #ifdef CONFIG_ANDROID_PMEM
@@ -278,6 +279,9 @@ static void __init reserve_pmem_memory(void)
 }
 
 static int msm8930_paddr_to_memtype(unsigned int paddr)
+=======
+static int msm8930_paddr_to_memtype(phys_addr_t paddr)
+>>>>>>> 938d750... msm: memory: Use phys_addr_t for memory reservation code
 =======
 static int msm8930_paddr_to_memtype(phys_addr_t paddr)
 >>>>>>> 938d750... msm: memory: Use phys_addr_t for memory reservation code
