@@ -385,32 +385,6 @@ void ion_system_contig_heap_unmap_dma(struct ion_heap *heap,
 	kfree(buffer->sg_table);
 }
 
-int ion_system_contig_heap_map_user(struct ion_heap *heap,
-				    struct ion_buffer *buffer,
-				    struct vm_area_struct *vma)
-{
-	unsigned long pfn = __phys_to_pfn(virt_to_phys(buffer->priv_virt));
-
-	if (ION_IS_CACHED(buffer->flags))
-		return remap_pfn_range(vma, vma->vm_start, pfn + vma->vm_pgoff,
-			       vma->vm_end - vma->vm_start,
-			       vma->vm_page_prot);
-	else {
-		pr_err("%s: cannot map system heap uncached\n", __func__);
-		return -EINVAL;
-	}
-}
-
-static int ion_system_contig_print_debug(struct ion_heap *heap,
-					 struct seq_file *s,
-					 const struct rb_root *unused)
-{
-	seq_printf(s, "total bytes currently allocated: %lx\n",
-		(unsigned long) atomic_read(&system_contig_heap_allocated));
-
-	return 0;
-}
-
 void *ion_system_contig_heap_map_kernel(struct ion_heap *heap,
 	struct ion_buffer *buffer)
 {
@@ -431,8 +405,12 @@ static struct ion_heap_ops kmalloc_ops = {
 	.unmap_dma = ion_system_contig_heap_unmap_dma,
 	.map_kernel = ion_heap_map_kernel,
 	.unmap_kernel = ion_heap_unmap_kernel,
+<<<<<<< HEAD
 	.map_user = ion_system_contig_heap_map_user,
 	.print_debug = ion_system_contig_print_debug,
+=======
+	.map_user = ion_heap_map_user,
+>>>>>>> d59c223... gpu: ion: Switch to generic map_user function for contig heap
 };
 
 struct ion_heap *ion_system_contig_heap_create(struct ion_platform_heap *pheap)
