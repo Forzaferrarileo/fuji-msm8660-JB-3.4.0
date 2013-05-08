@@ -135,6 +135,200 @@ MODULE_PARM_DESC(enabled, "enforce thermal limit on cpu");
 int __init msm_thermal_init(struct msm_thermal_data *pdata)
 {
 	int ret = 0;
+	unsigned int input;
+	int ret;
+	ret = sscanf(buf, "%u", &input);
+	if (ret != 1)
+		return -EINVAL;
+
+	msm_thermal_info.allowed_max_high = input;
+
+	return count;
+}
+
+static ssize_t store_allowed_max_low(struct kobject *a, struct attribute *b,
+				   const char *buf, size_t count)
+{
+	unsigned int input;
+	int ret;
+	ret = sscanf(buf, "%u", &input);
+	if (ret != 1)
+		return -EINVAL;
+
+	msm_thermal_info.allowed_max_low = input;
+
+	return count;
+}
+
+static ssize_t store_allowed_max_freq(struct kobject *a, struct attribute *b,
+				   const char *buf, size_t count)
+{
+	unsigned int input;
+	int ret;
+	ret = sscanf(buf, "%u", &input);
+	if (ret != 1)
+		return -EINVAL;
+
+	msm_thermal_info.allowed_max_freq = input;
+
+	return count;
+}
+
+static ssize_t store_allowed_mid_high(struct kobject *a, struct attribute *b,
+				   const char *buf, size_t count)
+{
+	unsigned int input;
+	int ret;
+	ret = sscanf(buf, "%u", &input);
+	if (ret != 1)
+		return -EINVAL;
+
+	msm_thermal_info.allowed_mid_high = input;
+
+	return count;
+}
+
+static ssize_t store_allowed_mid_low(struct kobject *a, struct attribute *b,
+				   const char *buf, size_t count)
+{
+	unsigned int input;
+	int ret;
+	ret = sscanf(buf, "%u", &input);
+	if (ret != 1)
+		return -EINVAL;
+
+	msm_thermal_info.allowed_mid_low = input;
+
+	return count;
+}
+
+static ssize_t store_allowed_mid_freq(struct kobject *a, struct attribute *b,
+				   const char *buf, size_t count)
+{
+	unsigned int input;
+	int ret;
+	ret = sscanf(buf, "%u", &input);
+	if (ret != 1)
+		return -EINVAL;
+
+	msm_thermal_info.allowed_mid_freq = input;
+
+	return count;
+}
+
+static ssize_t store_allowed_low_high(struct kobject *a, struct attribute *b,
+				   const char *buf, size_t count)
+{
+	unsigned int input;
+	int ret;
+	ret = sscanf(buf, "%u", &input);
+	if (ret != 1)
+		return -EINVAL;
+
+	msm_thermal_info.allowed_low_high = input;
+
+	return count;
+}
+
+static ssize_t store_allowed_low_low(struct kobject *a, struct attribute *b,
+				   const char *buf, size_t count)
+{
+	unsigned int input;
+	int ret;
+	ret = sscanf(buf, "%u", &input);
+	if (ret != 1)
+		return -EINVAL;
+
+	msm_thermal_info.allowed_low_low = input;
+
+	return count;
+}
+
+static ssize_t store_allowed_low_freq(struct kobject *a, struct attribute *b,
+				   const char *buf, size_t count)
+{
+	unsigned int input;
+	int ret;
+	ret = sscanf(buf, "%u", &input);
+	if (ret != 1)
+		return -EINVAL;
+
+	msm_thermal_info.allowed_low_freq = input;
+
+	return count;
+}
+
+static ssize_t store_poll_ms(struct kobject *a, struct attribute *b,
+				   const char *buf, size_t count)
+{
+	unsigned int input;
+	int ret;
+	ret = sscanf(buf, "%u", &input);
+	if (ret != 1)
+		return -EINVAL;
+
+	msm_thermal_info.poll_ms = input;
+
+	return count;
+}
+
+define_one_global_rw(shutdown_temp);
+define_one_global_rw(allowed_max_high);
+define_one_global_rw(allowed_max_low);
+define_one_global_rw(allowed_max_freq);
+define_one_global_rw(allowed_mid_high);
+define_one_global_rw(allowed_mid_low);
+define_one_global_rw(allowed_mid_freq);
+define_one_global_rw(allowed_low_high);
+define_one_global_rw(allowed_low_low);
+define_one_global_rw(allowed_low_freq);
+define_one_global_rw(poll_ms);
+
+static struct attribute *msm_thermal_attributes[] = {
+        &shutdown_temp.attr,
+	&allowed_max_high.attr,
+	&allowed_max_low.attr,
+	&allowed_max_freq.attr,
+	&allowed_mid_high.attr,
+	&allowed_mid_low.attr,
+	&allowed_mid_freq.attr,
+	&allowed_low_high.attr,
+	&allowed_low_low.attr,
+	&allowed_low_freq.attr,
+	&poll_ms.attr,
+	NULL
+};
+
+
+static struct attribute_group msm_thermal_attr_group = {
+	.attrs = msm_thermal_attributes,
+	.name = "conf",
+};
+
+/********* STATS START *********/
+
+static ssize_t show_is_throttled (struct kobject *a, struct attribute *b,
+                                  char *buf)
+{
+	return sprintf(buf, "%u\n", thermal_throttled);
+}
+define_one_global_ro(is_throttled);
+
+static struct attribute *msm_thermal_stats_attributes[] = {
+    &is_throttled.attr,
+    NULL
+};
+
+
+static struct attribute_group msm_thermal_stats_attr_group = {
+    .attrs = msm_thermal_stats_attributes,
+    .name = "stats",
+};
+/**************************** SYSFS END ****************************/
+
+int __devinit msm_thermal_init(struct msm_thermal_data *pdata)
+{
+	int ret = 0, rc = 0;
 
 	BUG_ON(!pdata);
 	BUG_ON(pdata->sensor_id >= TSENS_MAX_SENSORS);
@@ -143,6 +337,29 @@ int __init msm_thermal_init(struct msm_thermal_data *pdata)
 	enabled = 1;
 	INIT_DELAYED_WORK(&check_temp_work, check_temp);
 	schedule_delayed_work(&check_temp_work, 0);
+
+        check_temp_workq = alloc_workqueue(
+                "msm_thermal", WQ_UNBOUND | WQ_RESCUER, 1);
+        if (!check_temp_workq)
+                BUG_ON(ENOMEM);
+        INIT_DELAYED_WORK(&check_temp_work, check_temp);
+        queue_delayed_work(check_temp_workq, &check_temp_work, 0);
+
+	msm_thermal_kobject = kobject_create_and_add("msm_thermal", kernel_kobj);
+	if (msm_thermal_kobject) {
+		rc = sysfs_create_group(msm_thermal_kobject,
+							&msm_thermal_attr_group);
+		if (rc) {
+			pr_warn("msm_thermal: sysfs: ERROR, could not create sysfs group");
+		}
+        rc = sysfs_create_group(msm_thermal_kobject,
+                                &msm_thermal_stats_attr_group);
+        if (rc) {
+            pr_warn("msm_thermal: sysfs: ERROR, could not create sysfs stats group");
+        }
+	} else
+		pr_warn("msm_thermal: sysfs: ERROR, could not create sysfs kobj");
+
 
 	return ret;
 }
