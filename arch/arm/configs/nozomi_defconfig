@@ -702,7 +702,8 @@ CONFIG_CRASH_NOTES=y
 #
 # CPU Power Management
 #
-
+CONFIG_CPU_VOLTAGE_TABLE=y
+CONFIG_MSM8660_OC=1900000 
 #
 # CPU Frequency scaling
 #
