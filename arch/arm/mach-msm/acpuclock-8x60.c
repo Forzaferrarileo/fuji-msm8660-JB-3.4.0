@@ -862,6 +862,7 @@ static struct notifier_block __cpuinitdata acpuclock_cpu_notifier = {
 static __init struct clkctl_acpu_speed *select_freq_plan(void)
 {
 	uint32_t max_khz;
+	struct clkctl_acpu_speed *f;
 	max_khz = CONFIG_MSM8660_OC;
 	acpu_freq_tbl = acpu_freq_tbl_oc; 
 
