@@ -2070,12 +2070,14 @@ static int __init cpufreq_core_init(void)
 {
 	int cpu;
 
-	if (cpufreq_disabled())
-		return -ENODEV;
-
 #ifdef CONFIG_CPU_VOLTAGE_TABLE
   int rc;
 #endif  /* CONFIG_CPU_VOLTAGE_TABLE */ 
+
+	if (cpufreq_disabled())
+		return -ENODEV;
+
+
 
 	for_each_possible_cpu(cpu) {
 		per_cpu(cpufreq_policy_cpu, cpu) = -1;
