@@ -6,7 +6,7 @@ config IOSCHED_SIO
 	tristate "Simple I/O scheduler"
 	default y
 
-conifg IOSCHED_FIOPS
+config IOSCHED_FIOPS
 	tristate "IOPS based I/O scheduler"
 	default y
 
