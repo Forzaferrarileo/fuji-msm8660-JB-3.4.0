@@ -2,6 +2,14 @@ if ARCH_MSM
 
 menu "MSM SoC Type"
 
+config MSM_MPDEC
+ 	bool "Enable kernel based mpdecision"
+	depends on MSM_SMP
+	default n
+	help
+	  This enables kernel based multi core control.
+    	  (up/down hotplug based on load) 
+
 config MSM8660_OC
 	int "OC"
 	default 1512000
