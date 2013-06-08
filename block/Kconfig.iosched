@@ -2,13 +2,17 @@ if BLOCK
 
 menu "IO Schedulers"
 
-config IOSCHED_SIO
-	tristate "Simple I/O scheduler"
+config IOSCHED_ZEN
+	tristate "Zen I/O scheduler"
 	default y
+	---help---
+	   FCFS, dispatches are back-inserted, deadlines ensure fairness.
+	   Should work best with devices where there is no travel delay
+	   config IOSCHED_SIO
 
 config IOSCHED_FIOPS
 	tristate "IOPS based I/O scheduler"
-	default y
+	default n
 
 config IOSCHED_NOOP
 	bool
@@ -84,6 +88,9 @@ choice
 	config DEFAULT_FIOPS
 		bool "fiops" if IOSCHED_FIOPS=y
 
+	config DEFAULT_ZEN
+		bool "ZEN" if IOSCHED_ZEN=y
+
 endchoice
 
 config DEFAULT_IOSCHED
@@ -93,6 +100,7 @@ config DEFAULT_IOSCHED
 	default "noop" if DEFAULT_NOOP
 	default "sio" if DEFAULT_SIO
 	default "fiops" if DEFAULT_FIOPS
+	default "zen" if DEFAULT_ZEN
 
 endmenu
 
