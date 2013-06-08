@@ -49,7 +49,7 @@ static int lowmem_adj[6] = {
 	6,
 	12,
 };
-static int lowmem_adj_size = 4;
+static int lowmem_adj_size = 2;
 static int lowmem_minfree[6] = {
 	3 * 512,	/* 6MB */
 	2 * 1024,	/* 8MB */
@@ -70,7 +70,7 @@ struct killed_info {
 static struct killed_info *ignorelist_mempool;
 static unsigned int ignore_timeout_sec = 60;
 static DEFINE_SPINLOCK(lock_ignorelist);
-#define MAX_IGNORELIST 100
+#define MAX_IGNORELIST 50
 #define LMK_BUSY (-1)
 
 #define lowmem_print(level, x...)			\
