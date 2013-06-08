@@ -8,7 +8,10 @@ config IOSCHED_ZEN
 	---help---
 	   FCFS, dispatches are back-inserted, deadlines ensure fairness.
 	   Should work best with devices where there is no travel delay
-	   config IOSCHED_SIO
+	   
+config IOSCHED_SIO
+	tristate "Simple I/O scheduler"
+	default y
 
 config IOSCHED_FIOPS
 	tristate "IOPS based I/O scheduler"
