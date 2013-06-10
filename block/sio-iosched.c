@@ -2,7 +2,7 @@
  * Simple IO scheduler
  * Based on Noop, Deadline and V(R) IO schedulers.
  *
- * Copyright (C) 2012 Miguel Boton <mboton@lowlevel-studios.com>
+ * Copyright (C) 2012 Miguel Boton <mboton@gmail.com>
  *
  *
  * This algorithm does not do any kind of sorting, as it is aimed for
@@ -19,9 +19,6 @@
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/version.h>
-#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,38)
-#include <linux/slab.h>
-#endif
 
 enum { ASYNC, SYNC };
 
@@ -245,11 +242,7 @@ sio_latter_request(struct request_queue *q, struct request *rq)
 	return list_entry(rq->queuelist.next, struct request, queuelist);
 }
 
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
 static void *
-#else
-static int
-#endif
 sio_init_queue(struct request_queue *q)
 {
 	struct sio_data *sd;
@@ -257,11 +250,7 @@ sio_init_queue(struct request_queue *q)
 	/* Allocate structure */
 	sd = kmalloc_node(sizeof(*sd), GFP_KERNEL, q->node);
 	if (!sd)
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
 		return NULL;
-#else
-		return -ENOMEM;
-#endif
 
 	/* Initialize fifo lists */
 	INIT_LIST_HEAD(&sd->fifo_list[SYNC][READ]);
@@ -276,12 +265,9 @@ sio_init_queue(struct request_queue *q)
 	sd->fifo_expire[ASYNC][READ] = async_read_expire;
 	sd->fifo_expire[ASYNC][WRITE] = async_write_expire;
 	sd->fifo_batch = fifo_batch;
-#if LINUX_VERSION_CODE < KERNEL_VERSION(3,5,0)
+
 	return sd;
-#else
-	q->elevator->elevator_data = sd;
-	return 0;
-#endif
+}
 
 static void
 sio_exit_queue(struct elevator_queue *e)
@@ -404,7 +390,11 @@ static void __exit sio_exit(void)
 	elv_unregister(&iosched_sio);
 }
 
+#ifdef CONFIG_FAST_RESUME
+beforeresume_initcall(sio_init);
+#else
 module_init(sio_init);
+#endif
 module_exit(sio_exit);
 
 MODULE_AUTHOR("Miguel Boton");
