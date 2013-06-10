@@ -330,6 +330,7 @@ static ssize_t store_ignore_nice_load(struct kobject *a, struct attribute *b,
 				      const char *buf, size_t count)
 {
 	unsigned int input;
+	unsigned int cpu = 0 ;
 	int ret;
 
 	unsigned int j;
@@ -355,7 +356,7 @@ static ssize_t store_ignore_nice_load(struct kobject *a, struct attribute *b,
 		dbs_info->prev_cpu_idle = get_cpu_idle_time(j,
 						&dbs_info->prev_cpu_wall);
 		if (dbs_tuners_ins.ignore_nice)
-			dbs_info->prev_cpu_nice = kstat_cpu(j).cpustat.nice;
+			dbs_info->prev_cpu_nice = kcpustat_cpu(cpu).cpustat[CPUTIME_NICE];
 
 	}
 	mutex_unlock(&dbs_mutex);
@@ -641,8 +642,7 @@ static int cpufreq_governor_dbs(struct cpufreq_policy *policy,
 			j_dbs_info->prev_cpu_idle = get_cpu_idle_time(j,
 						&j_dbs_info->prev_cpu_wall);
 			if (dbs_tuners_ins.ignore_nice) {
-				j_dbs_info->prev_cpu_nice =
-						kstat_cpu(j).cpustat.nice;
+				j_dbs_info->prev_cpu_nice =kcpustat_cpu(cpu).cpustat[CPUTIME_NICE];
 			}
 
 			max_periods = max(DEFAULT_HOTPLUG_IN_SAMPLING_PERIODS,
