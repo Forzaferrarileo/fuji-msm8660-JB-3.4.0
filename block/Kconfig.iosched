@@ -2,6 +2,17 @@ if BLOCK
 
 menu "IO Schedulers"
 
+config IOSCHED_ROW
+	  tristate "ROW I/O scheduler"
+	  ---help---
+	    The ROW I/O scheduler gives priority to READ requests over the
+	    WRITE requests when dispatching, without starving WRITE requests.
+	    Requests are kept in priority queues. Dispatching is done in a RR
+	    manner when the dispatch quantum for each queue is calculated
+	    according to queue priority.
+	    Most suitable for mobile devices.
+ 
+
 config IOSCHED_ZEN
 	tristate "Zen I/O scheduler"
 	default y
@@ -94,6 +105,9 @@ choice
 	config DEFAULT_ZEN
 		bool "ZEN" if IOSCHED_ZEN=y
 
+	config DEFAULT_ROW
+		bool "ROW" if IOSCHED_ROW=y
+ 
 endchoice
 
 config DEFAULT_IOSCHED
@@ -104,6 +118,7 @@ config DEFAULT_IOSCHED
 	default "sio" if DEFAULT_SIO
 	default "fiops" if DEFAULT_FIOPS
 	default "zen" if DEFAULT_ZEN
+	default "row" if DEFAULT_ROW
 
 endmenu
 
