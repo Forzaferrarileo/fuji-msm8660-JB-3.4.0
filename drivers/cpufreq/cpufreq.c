@@ -1085,6 +1085,7 @@ static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
 #ifdef CONFIG_HOTPLUG_CPU
 	for_each_online_cpu(sibling) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	cp = per_cpu(cpufreq_cpu_data, sibling);
 		if (cp && cp->governor &&
 		       (cpumask_test_cpu(cpu, cp->related_cpus))) {		    
@@ -1094,11 +1095,16 @@ static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
      		        policy->user_policy.min = cp->user_policy.min;
 		        policy->user_policy.max = cp->user_policy.max;
 =======
+=======
+>>>>>>> fcff9e2... Linux 3.4.20
 		struct cpufreq_policy *cp = per_cpu(cpufreq_cpu_data, sibling);
 		if (cp && cp->governor &&
 		       (cpumask_test_cpu(cpu, cp->related_cpus))) {		    
 			policy->governor = cp->governor;
+<<<<<<< HEAD
 >>>>>>> parent of 548aff8... revert linux 3.4.20
+=======
+>>>>>>> fcff9e2... Linux 3.4.20
 			found = 1;
 			//pr_info("sibling: found sibling!\n");
 			break;
@@ -1107,10 +1113,14 @@ static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
 #endif
 	if (!found)
 <<<<<<< HEAD
+<<<<<<< HEAD
         	policy->governor = CPUFREQ_DEFAULT_GOVERNOR;
 =======
 		policy->governor = CPUFREQ_DEFAULT_GOVERNOR;
 >>>>>>> parent of 548aff8... revert linux 3.4.20
+=======
+		policy->governor = CPUFREQ_DEFAULT_GOVERNOR;
+>>>>>>> fcff9e2... Linux 3.4.20
 
 	/* call driver. From then on the cpufreq must be able
 	 * to accept all calls to ->verify and ->setpolicy for this CPU
@@ -1122,6 +1132,7 @@ static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
 	}
 	policy->user_policy.min = policy->min;
 	policy->user_policy.max = policy->max;
+<<<<<<< HEAD
 <<<<<<< HEAD
 //***ADD THIS HERE TO FORCE SECONDARY CPU'S TO INITIALIZE AT SAME POLICY AS BOOT CPU0**  
 	if (policy->cpu >=1) {
@@ -1135,6 +1146,8 @@ static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
 	}
 //***END** 
 =======
+=======
+>>>>>>> fcff9e2... Linux 3.4.20
 
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,

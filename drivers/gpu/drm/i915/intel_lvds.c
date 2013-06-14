@@ -771,6 +771,14 @@ static const struct dmi_system_id intel_no_lvds[] = {
 	},
 	{
 		.callback = intel_no_lvds_dmi_callback,
+		.ident = "Hewlett-Packard HP t5740e Thin Client",
+		.matches = {
+			DMI_MATCH(DMI_BOARD_VENDOR, "Hewlett-Packard"),
+			DMI_MATCH(DMI_PRODUCT_NAME, "HP t5740e Thin Client"),
+		},
+	},
+	{
+		.callback = intel_no_lvds_dmi_callback,
 		.ident = "Hewlett-Packard t5745",
 		.matches = {
 			DMI_MATCH(DMI_BOARD_VENDOR, "Hewlett-Packard"),
@@ -793,6 +801,7 @@ static const struct dmi_system_id intel_no_lvds[] = {
 			DMI_MATCH(DMI_BOARD_NAME, "MS-7469"),
 		},
 	},
+<<<<<<< HEAD
 <<<<<<< HEAD
 	{
 		.callback = intel_no_lvds_dmi_callback,
@@ -818,15 +827,24 @@ static const struct dmi_system_id intel_no_lvds[] = {
 			DMI_MATCH(DMI_SYS_VENDOR, "FUJITSU"),
 			DMI_MATCH(DMI_PRODUCT_NAME, "ESPRIMO Q900"),
 =======
+=======
+	{
+		.callback = intel_no_lvds_dmi_callback,
+>>>>>>> fcff9e2... Linux 3.4.20
 		.ident = "ZOTAC ZBOXSD-ID12/ID13",
 		.matches = {
 			DMI_MATCH(DMI_BOARD_VENDOR, "ZOTAC"),
 			DMI_MATCH(DMI_BOARD_NAME, "ZBOXSD-ID12/ID13"),
+<<<<<<< HEAD
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 		},
 	},
 =======
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+		},
+	},
+>>>>>>> fcff9e2... Linux 3.4.20
 
 	{ }	/* terminating entry */
 };

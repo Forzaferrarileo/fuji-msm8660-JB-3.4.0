@@ -775,9 +775,10 @@ static ssize_t show_protocols(struct device *device,
 	if (dev->driver_type == RC_DRIVER_SCANCODE) {
 		enabled = dev->rc_map.rc_type;
 		allowed = dev->allowed_protos;
-	} else {
+	} else if (dev->raw) {
 		enabled = dev->raw->enabled_protocols;
 		allowed = ir_raw_get_allowed_protocols();
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 	} else {
@@ -790,6 +791,10 @@ static ssize_t show_protocols(struct device *device,
 	} else
 		return -ENODEV;
 >>>>>>> parent of 548aff8... revert linux 3.4.20
+=======
+	} else
+		return -ENODEV;
+>>>>>>> fcff9e2... Linux 3.4.20
 
 	IR_dprintk(1, "allowed - 0x%llx, enabled - 0x%llx\n",
 		   (long long)allowed,

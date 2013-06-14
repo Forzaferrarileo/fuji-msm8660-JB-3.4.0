@@ -102,12 +102,19 @@ static bool disable_runtime = false;
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 =======
 bool efi_64bit;
-static bool efi_native;
 
 static struct efi efi_phys __initdata;
 static efi_system_table_t efi_systab __initdata;
 
+<<<<<<< HEAD
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+static inline bool efi_is_native(void)
+{
+	return IS_ENABLED(CONFIG_X86_64) == efi_64bit;
+}
+
+>>>>>>> fcff9e2... Linux 3.4.20
 static int __init setup_noefi(char *arg)
 {
 	efi_enabled = 0;
@@ -454,12 +461,17 @@ void __init efi_reserve_boot_services(void)
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 void __init efi_unmap_memmap(void)
 {
 <<<<<<< HEAD
 	clear_bit(EFI_MEMMAP, &x86_efi_facility);
 =======
 >>>>>>> parent of 548aff8... revert linux 3.4.20
+=======
+void __init efi_unmap_memmap(void)
+{
+>>>>>>> fcff9e2... Linux 3.4.20
 	if (memmap.map) {
 		early_iounmap(memmap.map, memmap.nr_map * memmap.desc_size);
 		memmap.map = NULL;
@@ -467,11 +479,17 @@ void __init efi_unmap_memmap(void)
 }
 
 void __init efi_free_boot_services(void)
+<<<<<<< HEAD
 =======
 static void __init efi_free_boot_services(void)
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+>>>>>>> fcff9e2... Linux 3.4.20
 {
 	void *p;
+
+	if (!efi_is_native())
+		return;
 
 	for (p = memmap.map; p < memmap.map_end; p += memmap.desc_size) {
 		efi_memory_desc_t *md = p;
@@ -488,6 +506,8 @@ static void __init efi_free_boot_services(void)
 
 		free_bootmem_late(start, size);
 	}
+
+	efi_unmap_memmap();
 }
 
 static int __init efi_systab_init(void *phys)
@@ -720,12 +740,10 @@ void __init efi_init(void)
 		return;
 	}
 	efi_phys.systab = (efi_system_table_t *)boot_params.efi_info.efi_systab;
-	efi_native = !efi_64bit;
 #else
 	efi_phys.systab = (efi_system_table_t *)
 			  (boot_params.efi_info.efi_systab |
 			  ((__u64)boot_params.efi_info.efi_systab_hi<<32));
-	efi_native = efi_64bit;
 #endif
 
 	if (efi_systab_init(efi_phys.systab)) {
@@ -759,7 +777,7 @@ void __init efi_init(void)
 	 * that doesn't match the kernel 32/64-bit mode.
 	 */
 
-	if (!efi_native)
+	if (!efi_is_native())
 		pr_info("No EFI runtime due to 32/64-bit mismatch with kernel\n");
 	else if (efi_runtime_init()) {
 		efi_enabled = 0;
@@ -771,7 +789,7 @@ void __init efi_init(void)
 		return;
 	}
 #ifdef CONFIG_X86_32
-	if (efi_native) {
+	if (efi_is_native()) {
 		x86_platform.get_wallclock = efi_get_time;
 		x86_platform.set_wallclock = efi_set_rtc_mmss;
 	}
@@ -837,8 +855,10 @@ void __init efi_enter_virtual_mode(void)
 	 * non-native EFI
 	 */
 
-	if (!efi_native)
-		goto out;
+	if (!efi_is_native()) {
+		efi_unmap_memmap();
+		return;
+	}
 
 	/* Merge contiguous regions of the same type and attribute */
 	for (p = memmap.map; p < memmap.map_end; p += memmap.desc_size) {
@@ -928,18 +948,12 @@ void __init efi_enter_virtual_mode(void)
 	}
 
 	/*
-	 * Thankfully, it does seem that no runtime services other than
-	 * SetVirtualAddressMap() will touch boot services code, so we can
-	 * get rid of it all at this point
-	 */
-	efi_free_boot_services();
-
-	/*
 	 * Now that EFI is in virtual mode, update the function
 	 * pointers in the runtime service table to the new virtual addresses.
 	 *
 	 * Call EFI services through wrapper functions.
 	 */
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 	efi.runtime_version = efi_systab.hdr.revision;
@@ -948,6 +962,9 @@ void __init efi_enter_virtual_mode(void)
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 =======
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+	efi.runtime_version = efi_systab.fw_revision;
+>>>>>>> fcff9e2... Linux 3.4.20
 	efi.get_time = virt_efi_get_time;
 	efi.set_time = virt_efi_set_time;
 	efi.get_wakeup_time = virt_efi_get_wakeup_time;
@@ -964,9 +981,6 @@ void __init efi_enter_virtual_mode(void)
 	if (__supported_pte_mask & _PAGE_NX)
 		runtime_code_page_mkexec();
 
-out:
-	early_iounmap(memmap.map, memmap.nr_map * memmap.desc_size);
-	memmap.map = NULL;
 	kfree(new_memmap);
 }
 

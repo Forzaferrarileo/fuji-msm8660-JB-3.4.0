@@ -30,7 +30,11 @@ void init_scattered_cpuid_features(struct cpuinfo_x86 *c)
 	u32 regs[4];
 	const struct cpuid_bit *cb;
 
+<<<<<<< HEAD
 	static const struct cpuid_bit cpuid_bits[] = {
+=======
+	static const struct cpuid_bit __cpuinitconst cpuid_bits[] = {
+>>>>>>> fcff9e2... Linux 3.4.20
 		{ X86_FEATURE_DTHERM,		CR_EAX, 0, 0x00000006, 0 },
 		{ X86_FEATURE_IDA,		CR_EAX, 1, 0x00000006, 0 },
 		{ X86_FEATURE_ARAT,		CR_EAX, 2, 0x00000006, 0 },

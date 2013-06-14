@@ -366,6 +366,7 @@ void kernel_restart(char *cmd)
 {
 	kernel_restart_prepare(cmd);
 <<<<<<< HEAD
+<<<<<<< HEAD
 	disable_nonboot_cpus();
 <<<<<<< HEAD
 	syscore_shutdown();
@@ -373,6 +374,9 @@ void kernel_restart(char *cmd)
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 =======
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+	disable_nonboot_cpus();
+>>>>>>> fcff9e2... Linux 3.4.20
 	if (!cmd)
 		printk(KERN_EMERG "Restarting system.\n");
 	else

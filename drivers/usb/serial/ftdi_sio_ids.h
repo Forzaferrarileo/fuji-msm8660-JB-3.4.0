@@ -517,6 +517,11 @@
  */
 #define FTDI_TAVIR_STK500_PID	0xFA33	/* STK500 AVR programmer */
 
+/*
+ * TIAO product ids (FTDI_VID)
+ * http://www.tiaowiki.com/w/Main_Page
+ */
+#define FTDI_TIAO_UMPA_PID	0x8a98	/* TIAO/DIYGADGET USB Multi-Protocol Adapter */
 
 
 /********************************/
@@ -542,7 +547,10 @@
 /*
  * Microchip Technology, Inc.
  *
- * MICROCHIP_VID (0x04D8) and MICROCHIP_USB_BOARD_PID (0x000A) are also used by:
+ * MICROCHIP_VID (0x04D8) and MICROCHIP_USB_BOARD_PID (0x000A) are
+ * used by single function CDC ACM class based firmware demo
+ * applications.  The VID/PID has also been used in firmware
+ * emulating FTDI serial chips by:
  * Hornby Elite - Digital Command Control Console
  * http://www.hornby.com/hornby-dcc/controllers/
  */

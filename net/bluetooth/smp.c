@@ -46,6 +46,8 @@
 
 static int smp_distribute_keys(struct l2cap_conn *conn, __u8 force);
 
+#define AUTH_REQ_MASK   0x07
+
 static inline void swap128(u8 src[16], u8 dst[16])
 {
 	int i;
@@ -242,7 +244,7 @@ static void build_pairing_cmd(struct l2cap_conn *conn,
 		req->max_key_size = SMP_MAX_ENC_KEY_SIZE;
 		req->init_key_dist = all_keys;
 		req->resp_key_dist = dist_keys;
-		req->auth_req = authreq;
+		req->auth_req = (authreq & AUTH_REQ_MASK);
 		BT_DBG("SMP_CMD_PAIRING_REQ %d %d %d %d %2.2x %2.2x",
 				req->io_capability, req->oob_flag,
 				req->auth_req, req->max_key_size,
@@ -265,11 +267,15 @@ static void build_pairing_cmd(struct l2cap_conn *conn,
 <<<<<<< HEAD
 =======
 	rsp->auth_req = authreq;
+<<<<<<< HEAD
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 	rsp->auth_req = (authreq & AUTH_REQ_MASK);
 =======
 	rsp->auth_req = authreq;
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+	rsp->auth_req = (authreq & AUTH_REQ_MASK);
+>>>>>>> fcff9e2... Linux 3.4.20
 	BT_DBG("SMP_CMD_PAIRING_RSP %d %d %d %d %2.2x %2.2x",
 			req->io_capability, req->oob_flag, req->auth_req,
 			req->max_key_size, req->init_key_dist,
@@ -739,8 +745,9 @@ invalid_key:
 	return 0;
 }
 
-int smp_conn_security(struct l2cap_conn *conn, __u8 sec_level)
+int smp_conn_security(struct hci_conn *hcon, __u8 sec_level)
 {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 struct l2cap_conn *conn = hcon->l2cap_data;
@@ -750,6 +757,9 @@ struct l2cap_conn *conn = hcon->l2cap_data;
 =======
 	struct hci_conn *hcon = conn->hcon;
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+	struct l2cap_conn *conn = hcon->l2cap_data;
+>>>>>>> fcff9e2... Linux 3.4.20
 	__u8 authreq;
 
 	BT_DBG("conn %p hcon %p %d req: %d",
@@ -1061,10 +1071,6 @@ int smp_link_encrypt_cmplt(struct l2cap_conn *conn, u8 status, u8 encrypt)
 
 	if (!status && encrypt && !hcon->sec_req)
 		return smp_distribute_keys(conn, 0);
-
-	/* Fall back to Pairing request if failed a Link Security request */
-	else if (hcon->sec_req  && (status || !encrypt))
-		smp_conn_security(conn, hcon->pending_sec_level);
 
 	hci_conn_put(hcon);
 

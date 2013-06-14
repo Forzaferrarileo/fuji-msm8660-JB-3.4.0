@@ -1029,6 +1029,7 @@ static void l2cap_le_conn_ready(struct l2cap_conn *conn)
 	write_lock_bh(&list->lock);
 
 	hci_conn_hold(conn->hcon);
+	conn->hcon->disc_timeout = HCI_DISCONN_TIMEOUT;
 
 	l2cap_sock_init(sk, parent);
 	bacpy(&bt_sk(sk)->src, conn->src);
@@ -1053,6 +1054,7 @@ static void l2cap_conn_ready(struct l2cap_conn *conn)
 	struct l2cap_chan_list *l = &conn->chan_list;
 	struct sock *sk;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	struct hci_conn *hcon = conn->hcon;
 <<<<<<< HEAD
 =======
@@ -1060,10 +1062,14 @@ static void l2cap_conn_ready(struct l2cap_conn *conn)
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 =======
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+	struct hci_conn *hcon = conn->hcon;
+	struct l2cap_chan *chan;
+>>>>>>> fcff9e2... Linux 3.4.20
 
 	BT_DBG("conn %p", conn);
 
-	if (!conn->hcon->out && conn->hcon->type == LE_LINK)
+	if (!hcon->out && hcon->type == LE_LINK)
 		l2cap_le_conn_ready(conn);
 
 	read_lock(&l->lock);
@@ -1078,9 +1084,6 @@ static void l2cap_conn_ready(struct l2cap_conn *conn)
 
 				if (pending_sec > sec_level)
 					sec_level = pending_sec;
-
-				if (smp_conn_security(conn, sec_level))
-					l2cap_chan_ready(sk);
 
 				hci_conn_put(conn->hcon);
 
@@ -1102,8 +1105,12 @@ static void l2cap_conn_ready(struct l2cap_conn *conn)
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 =======
 	} else if (conn->hcon->type == LE_LINK) {
+<<<<<<< HEAD
 		smp_conn_security(conn, BT_SECURITY_HIGH);
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+		smp_conn_security(hcon, hcon->pending_sec_level);
+>>>>>>> fcff9e2... Linux 3.4.20
 	}
 
 	read_unlock(&l->lock);

@@ -79,18 +79,24 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define	BIF_FB_EN						0x5490
 #define		FB_READ_EN					(1 << 0)
 #define		FB_WRITE_EN					(1 << 1)
 
 =======
 >>>>>>> parent of 548aff8... revert linux 3.4.20
+=======
+>>>>>>> fcff9e2... Linux 3.4.20
 #define	CP_STRMOUT_CNTL					0x84FC
 
 #define	CP_COHER_CNTL					0x85F0
 #define	CP_COHER_SIZE					0x85F4
+<<<<<<< HEAD
 =======
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+>>>>>>> fcff9e2... Linux 3.4.20
 #define	CP_COHER_BASE					0x85F8
 #define CP_ME_CNTL					0x86D8
 #define		CP_ME_HALT					(1 << 28)
@@ -287,6 +293,7 @@
 #define	SCRATCH_UMSK					0x8540
 #define	SCRATCH_ADDR					0x8544
 
+#define	SMX_SAR_CTL0					0xA008
 #define	SMX_DC_CTL0					0xA020
 #define		USE_HASH_FUNCTION				(1 << 0)
 #define		NUMBER_OF_SETS(x)				((x) << 1)

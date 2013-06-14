@@ -10,6 +10,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 #if __LINUX_ARM_ARCH__ < 6
 /* On pre-ARMv6 hardware the swp based implementation is the most efficient. */
@@ -142,4 +143,7 @@ __mutex_fastpath_trylock(atomic_t *count, int (*fail_fn)(atomic_t *))
 
 #endif
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+#include <asm-generic/mutex-xchg.h>
+>>>>>>> fcff9e2... Linux 3.4.20
 #endif

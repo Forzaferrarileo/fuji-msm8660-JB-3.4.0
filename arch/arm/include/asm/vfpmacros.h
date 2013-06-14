@@ -39,7 +39,7 @@
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 =======
 	tst	\tmp, #HWCAP_VFPv3D16
-	ldceq	p11, cr0, [\base],#32*4		    @ FLDMIAD \base!, {d16-d31}
+	ldceql	p11, cr0, [\base],#32*4		    @ FLDMIAD \base!, {d16-d31}
 	addne	\base, \base, #32*4		    @ step over unused register space
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
 #else
@@ -75,7 +75,7 @@
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 =======
 	tst	\tmp, #HWCAP_VFPv3D16
-	stceq	p11, cr0, [\base],#32*4		    @ FSTMIAD \base!, {d16-d31}
+	stceql	p11, cr0, [\base],#32*4		    @ FSTMIAD \base!, {d16-d31}
 	addne	\base, \base, #32*4		    @ step over unused register space
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
 #else

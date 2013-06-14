@@ -61,13 +61,13 @@
 
 @ VFP hardware support entry point.
 @
-@  r0  = faulted instruction
-@  r2  = faulted PC+4
-@  r9  = successful return
+@  r0  = instruction opcode (32-bit ARM or two 16-bit Thumb)
+@  r2  = PC value to resume execution after successful emulation
+@  r9  = normal "successful" return address
 @  r10 = vfp_state union
 @  r11 = CPU number
-@  lr  = failure return
-
+@  lr  = unrecognised instruction return address
+@  IRQs enabled.
 ENTRY(vfp_support_entry)
 	DBGSTR3	"instr %08x pc %08x state %p", r0, r2, r10
 
@@ -162,12 +162,16 @@ vfp_hw_state_valid:
 					@ out before setting an FPEXC that
 					@ stops us reading stuff
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fcff9e2... Linux 3.4.20
 	VFPFMXR	FPEXC, r1		@ Restore FPEXC last
 	sub	r2, r2, #4		@ Retry current instruction - if Thumb
 	str	r2, [sp, #S_PC]		@ mode it's two 16-bit instructions,
 					@ else it's one 32-bit instruction, so
 					@ always subtract 4 from the following
 					@ instruction address.
+<<<<<<< HEAD
 <<<<<<< HEAD
 #ifdef CONFIG_PREEMPT_COUNT
 =======
@@ -177,6 +181,8 @@ vfp_hw_state_valid:
 	VFPFMXR	FPEXC, r1		@ restore FPEXC last
 	sub	r2, r2, #4
 	str	r2, [sp, #S_PC]		@ retry the instruction
+=======
+>>>>>>> fcff9e2... Linux 3.4.20
 #ifdef CONFIG_PREEMPT
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
 	get_thread_info	r10

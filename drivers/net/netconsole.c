@@ -659,10 +659,13 @@ static int netconsole_netdev_event(struct notifier_block *this,
 					dev_put(nt->np.dev);
 					nt->np.dev = NULL;
 <<<<<<< HEAD
+<<<<<<< HEAD
 				}
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 =======
 					netconsole_target_put(nt);
+=======
+>>>>>>> fcff9e2... Linux 3.4.20
 				}
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
 				nt->enabled = 0;

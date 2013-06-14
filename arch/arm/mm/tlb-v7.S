@@ -43,25 +43,36 @@ ENTRY(v7wbi_flush_user_tlb_range)
 #else
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	asid	r3, r3	
 #ifdef CONFIG_ARM_ERRATA_720789
 	ALT_SMP(W(mov)	r3, #0	)
 	ALT_UP(W(nop)		)
 #endif			@ mask ASID
 =======
+=======
+>>>>>>> fcff9e2... Linux 3.4.20
 	asid	r3, r3
 #ifdef CONFIG_ARM_ERRATA_720789
 	ALT_SMP(W(mov)	r3, #0	)
 	ALT_UP(W(nop)		)
 #endif				@ mask ASID
+<<<<<<< HEAD
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 =======
 	asid	r3, r3				@ mask ASID
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+>>>>>>> fcff9e2... Linux 3.4.20
 	orr	r0, r3, r0, lsl #PAGE_SHIFT	@ Create initial MVA
 #endif
 	mov	r1, r1, lsl #PAGE_SHIFT
 1:
+#ifdef CONFIG_ARM_ERRATA_720789
+	ALT_SMP(mcr	p15, 0, r0, c8, c3, 3)	@ TLB invalidate U MVA all ASID (shareable)
+#else
+	ALT_SMP(mcr	p15, 0, r0, c8, c3, 1)	@ TLB invalidate U MVA (shareable)
+#endif
 #ifdef CONFIG_ARCH_MSM8X60
 	ALT_SMP(mcr	p15, 0, r0, c8, c3, 3)	@ TLB invalidate U MVA (shareable)
 #else
@@ -92,6 +103,7 @@ ENTRY(v7wbi_flush_kern_tlb_range)
 	mov	r1, r1, lsl #PAGE_SHIFT
 1:
 <<<<<<< HEAD
+<<<<<<< HEAD
 #ifdef CONFIG_ARM_ERRATA_720789
 	ALT_SMP(mcr	p15, 0, r0, c8, c3, 3)	@ TLB invalidate U MVA all ASID (shareable)
 #else
@@ -103,6 +115,13 @@ ENTRY(v7wbi_flush_kern_tlb_range)
 #endif
 =======
 >>>>>>> parent of a458bd9... Again Linux 3.4.48
+=======
+#ifdef CONFIG_ARM_ERRATA_720789
+	ALT_SMP(mcr	p15, 0, r0, c8, c3, 3)	@ TLB invalidate U MVA all ASID (shareable)
+#else
+ 	ALT_SMP(mcr	p15, 0, r0, c8, c3, 1)	@ TLB invalidate U MVA (shareable)
+#endif
+>>>>>>> fcff9e2... Linux 3.4.20
 #ifdef CONFIG_ARCH_MSM8X60
 	ALT_SMP(mcr	p15, 0, r0, c8, c3, 3)	@ TLB invalidate U MVA (shareable)
 #else
