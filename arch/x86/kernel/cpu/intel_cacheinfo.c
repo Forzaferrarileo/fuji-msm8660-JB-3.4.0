@@ -220,7 +220,7 @@ static const unsigned short __cpuinitconst assocs[] = {
 static const unsigned char __cpuinitconst levels[] = { 1, 1, 2, 3 };
 static const unsigned char __cpuinitconst types[] = { 1, 2, 3, 3 };
 
-static void __cpuinit
+static void
 amd_cpuid4(int leaf, union _cpuid4_leaf_eax *eax,
 		     union _cpuid4_leaf_ebx *ebx,
 		     union _cpuid4_leaf_ecx *ecx)
@@ -1188,7 +1188,7 @@ static int cacheinfo_cpu_callback(struct notifier_block *nfb,
 	return NOTIFY_OK;
 }
 
-static struct notifier_block __cpuinitdata cacheinfo_cpu_notifier = {
+static struct notifier_block cacheinfo_cpu_notifier = {
 	.notifier_call = cacheinfo_cpu_callback,
 };
 
