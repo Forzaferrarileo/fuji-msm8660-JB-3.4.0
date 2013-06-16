@@ -1,6 +1,6 @@
 VERSION = 3
 PATCHLEVEL = 4
-SUBLEVEL = 4
+SUBLEVEL = 48
 EXTRAVERSION =
 NAME = Saber-toothed Squirrel
 
@@ -354,7 +354,7 @@ CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
 LDFLAGS_MODULE  =
-CFLAGS_KERNEL	= -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -ffast-math -fsingle-precision-constant -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -funswitch-loops --param l2-cache-size=512
+CFLAGS_KERNEL	= -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -ffast-math -fsingle-precision-constant -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -funswitch-loops --param l2-cache-size=512 
 AFLAGS_KERNEL	=
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
@@ -374,9 +374,10 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -Wno-format-security \
 		   -Wno-maybe-uninitialized \
 		   -Wno-unused-variable \
+		   -Wno-parentheses \
 		   -fno-delete-null-pointer-checks
 KBUILD_AFLAGS_KERNEL :=
-KBUILD_CFLAGS_KERNEL := -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -ffast-math -fsingle-precision-constant -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -funswitch-loops --param l2-cache-size=512
+KBUILD_CFLAGS_KERNEL := -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -ffast-math -fsingle-precision-constant -mtune=cortex-a8 -march=armv7-a -mfpu=neon -ftree-vectorize -funswitch-loops --param l2-cache-size=512 
 KBUILD_AFLAGS   := -D__ASSEMBLY__
 KBUILD_AFLAGS_MODULE  := -DMODULE
 KBUILD_CFLAGS_MODULE  := -DMODULE 
