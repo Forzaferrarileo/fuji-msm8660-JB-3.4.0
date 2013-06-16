@@ -588,9 +588,7 @@ static void domain_update_iommu_coherency(struct dmar_domain *domain)
 {
 	int i;
 
-	i = find_first_bit(domain->iommu_bmp, g_num_of_iommus);
-
-	domain->iommu_coherency = i < g_num_of_iommus ? 1 : 0;
+	domain->iommu_coherency = 1;
 
 	for_each_set_bit(i, domain->iommu_bmp, g_num_of_iommus) {
 		if (!ecap_coherent(g_iommus[i]->ecap)) {
@@ -2299,17 +2297,6 @@ static int domain_add_dev_info(struct dmar_domain *domain,
 	list_add(&info->global, &device_domain_list);
 	pdev->dev.archdata.iommu = info;
 	spin_unlock_irqrestore(&device_domain_lock, flags);
-
-	ret = domain_context_mapping(domain, pdev, translation);
-	if (ret) {
-		spin_lock_irqsave(&device_domain_lock, flags);
-		list_del(&info->link);
-		list_del(&info->global);
-		pdev->dev.archdata.iommu = NULL;
-		spin_unlock_irqrestore(&device_domain_lock, flags);
-		free_devinfo_mem(info);
-		return ret;
-	}
 
 	ret = domain_context_mapping(domain, pdev, translation);
 	if (ret) {
