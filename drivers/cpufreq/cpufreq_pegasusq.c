@@ -157,7 +157,7 @@ return nr_run_avg;
 #define DEF_UP_NR_CPUS (1)
 #define DEF_CPU_UP_RATE (15)
 #define DEF_CPU_DOWN_RATE (20)
-#define DEF_FREQ_STEP (45)
+#define DEF_FREQ_STEP (50)
 #define DEF_START_DELAY (0)
 
 #define UP_THRESHOLD_AT_MIN_FREQ (65)
@@ -171,8 +171,8 @@ static int hotplug_rq[4][2] = {
 };
 
 static int hotplug_freq[4][2] = {
-{0, 450000},
-{450000, 350000},
+{0, 400000},
+{400000, 350000},
 {350000, 500000},
 {200000, 0}
 };
