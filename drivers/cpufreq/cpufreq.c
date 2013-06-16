@@ -820,9 +820,21 @@ static int cpufreq_add_dev_policy(unsigned int cpu,
 #ifdef CONFIG_SMP
 	unsigned long flags;
 	unsigned int j;
-/*
+
 #ifdef CONFIG_HOTPLUG_CPU
 	struct cpufreq_governor *gov;
+
+//***ADD HERE TO INSURE SECONDARY CPU'S ALWAYS FOLLOW CPU0**  
+	if(cpu >=1){   // force all other cpu's to follow cpu0
+		cpufreq_policy_save.max = per_cpu(cpufreq_cpu_data,0)->max;  
+	        cpufreq_policy_save.min = per_cpu(cpufreq_cpu_data,0)->min;
+	        policy->min = cpufreq_policy_save.min;
+	        policy->user_policy.min = policy->min;
+ 	        policy->max = cpufreq_policy_save.max;
+	        policy->user_policy.max = policy->max;
+	goto jump_out;
+  }
+//***END 
 
 	gov = __find_governor(per_cpu(cpufreq_policy_save, cpu).gov);
 	if (gov) {
@@ -838,11 +850,13 @@ static int cpufreq_add_dev_policy(unsigned int cpu,
 		policy->max = per_cpu(cpufreq_policy_save, cpu).max;
 		policy->user_policy.max = policy->max;
 	}
+	//ADD THIS ALSO  
+	jump_out: 
 	pr_debug("Restoring CPU%d min %d and max %d\n",
 		cpu, policy->min, policy->max);
 #endif
 
-*/
+
 	for_each_cpu(j, policy->cpus) {
 		struct cpufreq_policy *managed_policy;
 
@@ -1097,14 +1111,17 @@ static int cpufreq_add_dev(struct device *dev, struct subsys_interface *sif)
 	}
 	policy->user_policy.min = policy->min;
 	policy->user_policy.max = policy->max;
-	if (found) {
-		/* Calling the driver can overwrite policy frequencies again */
-		policy->min = cp->min;
-	        policy->max = cp->max;
-		policy->user_policy.min = cp->user_policy.min;
-	        policy->user_policy.max = cp->user_policy.max;
-  }
-
+//***ADD THIS HERE TO FORCE SECONDARY CPU'S TO INITIALIZE AT SAME POLICY AS BOOT CPU0**  
+	if (policy->cpu >=1) {
+	// dealing with secondary cpu, force policy of cpu0 on this cpu as well for init
+	cp = per_cpu(cpufreq_cpu_data, 0);
+	policy->governor = cp->governor;
+	policy->min = cp->min;
+	policy->max = cp->max;
+	policy->user_policy.min = cp->user_policy.min;
+	policy->user_policy.max = cp->user_policy.max;
+	}
+//***END** 
 	blocking_notifier_call_chain(&cpufreq_policy_notifier_list,
 				     CPUFREQ_START, policy);
 
@@ -1810,6 +1827,19 @@ static int __cpufreq_set_policy(struct cpufreq_policy *data,
 {
 	int ret = 0;
 
+//***ADD HERE TO ENSURE ANYTIME THERE IS A POLICY CHANGE SECONDARY CPU ALWAYS
+//***FOLLOWS CPU0
+	struct cpufreq_policy *cpu0_policy;
+	if(data->cpu >= 1){
+	pr_debug("forcing cpu0 policy on cpu\n");
+	cpu0_policy = cpufreq_cpu_get(0); // force cpu1 to follow policy of cpu0
+	policy->min = cpu0_policy->min;
+	policy->max = cpu0_policy->max;
+	if(cpu0_policy->user_policy.governor){
+		policy->governor = cpu0_policy->user_policy.governor;
+		}  
+	}
+//***END
 	pr_debug("setting new policy for CPU %u: %u - %u kHz\n", policy->cpu,
 		policy->min, policy->max);
 
