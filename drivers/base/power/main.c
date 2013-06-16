@@ -1015,6 +1015,7 @@ int dpm_suspend_end(pm_message_t state)
 
 	error = dpm_suspend_noirq(state);
 	if (error) {
+<<<<<<< HEAD
 		dpm_resume_early(resume_event(state));
 <<<<<<< HEAD
 		return error;
@@ -1024,6 +1025,8 @@ int dpm_suspend_end(pm_message_t state)
 
 	error = dpm_suspend_noirq(state);
 	if (error) {
+=======
+>>>>>>> parent of a458bd9... Again Linux 3.4.48
 		dpm_resume_early(state);
 =======
 >>>>>>> parent of 548aff8... revert linux 3.4.20
@@ -1073,7 +1076,7 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
 	dpm_wait_for_children(dev, async);
 
 	if (async_error)
-		goto Complete;
+		return 0;
 
 	pm_runtime_get_noresume(dev);
 	if (pm_runtime_barrier(dev) && device_may_wakeup(dev))
@@ -1082,7 +1085,7 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
 	if (pm_wakeup_pending()) {
 		pm_runtime_put_sync(dev);
 		async_error = -EBUSY;
-		goto Complete;
+		return 0;
 	}
 
 	data.dev = dev;
@@ -1151,7 +1154,6 @@ static int __device_suspend(struct device *dev, pm_message_t state, bool async)
 	del_timer_sync(&timer);
 	destroy_timer_on_stack(&timer);
 
-Complete:
 	complete_all(&dev->power.completion);
 
 	if (error) {

@@ -771,14 +771,6 @@ static const struct dmi_system_id intel_no_lvds[] = {
 	},
 	{
 		.callback = intel_no_lvds_dmi_callback,
-		.ident = "Hewlett-Packard HP t5740e Thin Client",
-		.matches = {
-			DMI_MATCH(DMI_BOARD_VENDOR, "Hewlett-Packard"),
-			DMI_MATCH(DMI_PRODUCT_NAME, "HP t5740e Thin Client"),
-		},
-	},
-	{
-		.callback = intel_no_lvds_dmi_callback,
 		.ident = "Hewlett-Packard t5745",
 		.matches = {
 			DMI_MATCH(DMI_BOARD_VENDOR, "Hewlett-Packard"),
@@ -801,6 +793,7 @@ static const struct dmi_system_id intel_no_lvds[] = {
 			DMI_MATCH(DMI_BOARD_NAME, "MS-7469"),
 		},
 	},
+<<<<<<< HEAD
 	{
 		.callback = intel_no_lvds_dmi_callback,
 <<<<<<< HEAD
@@ -832,6 +825,8 @@ static const struct dmi_system_id intel_no_lvds[] = {
 >>>>>>> parent of 548aff8... revert linux 3.4.20
 		},
 	},
+=======
+>>>>>>> parent of a458bd9... Again Linux 3.4.48
 
 	{ }	/* terminating entry */
 };

@@ -775,13 +775,16 @@ static ssize_t show_protocols(struct device *device,
 	if (dev->driver_type == RC_DRIVER_SCANCODE) {
 		enabled = dev->rc_map.rc_type;
 		allowed = dev->allowed_protos;
-	} else if (dev->raw) {
+	} else {
 		enabled = dev->raw->enabled_protocols;
 		allowed = ir_raw_get_allowed_protocols();
+<<<<<<< HEAD
 <<<<<<< HEAD
 	} else {
 		mutex_unlock(&dev->lock);
 		return -ENODEV;
+=======
+>>>>>>> parent of a458bd9... Again Linux 3.4.48
 	}
 =======
 	} else

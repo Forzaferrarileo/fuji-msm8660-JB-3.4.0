@@ -320,6 +320,7 @@ void kernel_restart_prepare(char *cmd)
 	system_state = SYSTEM_RESTART;
 	usermodehelper_disable();
 	device_shutdown();
+	syscore_shutdown();
 }
 
 /**
@@ -364,11 +365,14 @@ EXPORT_SYMBOL(unregister_reboot_notifier);
 void kernel_restart(char *cmd)
 {
 	kernel_restart_prepare(cmd);
+<<<<<<< HEAD
 	disable_nonboot_cpus();
 <<<<<<< HEAD
 	syscore_shutdown();
 =======
 >>>>>>> parent of 548aff8... revert linux 3.4.20
+=======
+>>>>>>> parent of a458bd9... Again Linux 3.4.48
 	if (!cmd)
 		printk(KERN_EMERG "Restarting system.\n");
 	else
@@ -394,7 +398,6 @@ static void kernel_shutdown_prepare(enum system_states state)
 void kernel_halt(void)
 {
 	kernel_shutdown_prepare(SYSTEM_HALT);
-	disable_nonboot_cpus();
 	syscore_shutdown();
 	printk(KERN_EMERG "System halted.\n");
 	kmsg_dump(KMSG_DUMP_HALT);

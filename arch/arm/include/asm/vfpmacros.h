@@ -28,6 +28,7 @@
 	ldr	\tmp, =elf_hwcap		    @ may not have MVFR regs
 	ldr	\tmp, [\tmp, #0]
 <<<<<<< HEAD
+<<<<<<< HEAD
 	tst	\tmp, #HWCAP_VFPD32
 	ldcnel	p11, cr0, [\base],#32*4		    @ FLDMIAD \base!, {d16-d31}
 	addeq	\base, \base, #32*4		    @ step over unused register space
@@ -36,6 +37,11 @@
 	ldceql	p11, cr0, [\base],#32*4		    @ FLDMIAD \base!, {d16-d31}
 	addne	\base, \base, #32*4		    @ step over unused register space
 >>>>>>> parent of 548aff8... revert linux 3.4.20
+=======
+	tst	\tmp, #HWCAP_VFPv3D16
+	ldceq	p11, cr0, [\base],#32*4		    @ FLDMIAD \base!, {d16-d31}
+	addne	\base, \base, #32*4		    @ step over unused register space
+>>>>>>> parent of a458bd9... Again Linux 3.4.48
 #else
 	VFPFMRX	\tmp, MVFR0			    @ Media and VFP Feature Register 0
 	and	\tmp, \tmp, #MVFR0_A_SIMD_MASK	    @ A_SIMD field
@@ -58,6 +64,7 @@
 	ldr	\tmp, =elf_hwcap		    @ may not have MVFR regs
 	ldr	\tmp, [\tmp, #0]
 <<<<<<< HEAD
+<<<<<<< HEAD
 	tst	\tmp, #HWCAP_VFPD32
 	stcnel	p11, cr0, [\base],#32*4		    @ FSTMIAD \base!, {d16-d31}
 	addeq	\base, \base, #32*4		    @ step over unused register space
@@ -66,6 +73,11 @@
 	stceql	p11, cr0, [\base],#32*4		    @ FSTMIAD \base!, {d16-d31}
 	addne	\base, \base, #32*4		    @ step over unused register space
 >>>>>>> parent of 548aff8... revert linux 3.4.20
+=======
+	tst	\tmp, #HWCAP_VFPv3D16
+	stceq	p11, cr0, [\base],#32*4		    @ FSTMIAD \base!, {d16-d31}
+	addne	\base, \base, #32*4		    @ step over unused register space
+>>>>>>> parent of a458bd9... Again Linux 3.4.48
 #else
 	VFPFMRX	\tmp, MVFR0			    @ Media and VFP Feature Register 0
 	and	\tmp, \tmp, #MVFR0_A_SIMD_MASK	    @ A_SIMD field
