@@ -1746,6 +1746,20 @@ static int asus_laptop_get_info(struct asus_laptop *asus)
 	if (*string)
 		pr_notice("  %s model detected\n", string);
 
+<<<<<<< HEAD
+=======
+	/*
+	 * The HWRS method return informations about the hardware.
+	 * 0x80 bit is for WLAN, 0x100 for Bluetooth,
+	 * 0x40 for WWAN, 0x10 for WIMAX.
+	 * The significance of others is yet to be found.
+	 */
+	status =
+	    acpi_evaluate_integer(asus->handle, "HWRS", NULL, &hwrs_result);
+	if (!ACPI_FAILURE(status))
+		pr_notice("  HWRS returned %x", (int)hwrs_result);
+
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	if (!acpi_check_handle(asus->handle, METHOD_WL_STATUS, NULL))
 		asus->have_rsts = true;
 

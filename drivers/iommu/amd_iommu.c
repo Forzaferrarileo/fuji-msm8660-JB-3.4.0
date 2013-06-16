@@ -961,6 +961,8 @@ void iommu_flush_all_caches(struct amd_iommu *iommu)
 		iommu_flush_dte_all(iommu);
 		iommu_flush_tlb_all(iommu);
 	}
+
+	memset(__evt, 0, 4 * sizeof(u32));
 }
 
 /*
@@ -2280,6 +2282,10 @@ static int device_change_notifier(struct notifier_block *nb,
 			list_add_tail(&dma_domain->list, &iommu_pd_list);
 			spin_unlock_irqrestore(&iommu_pd_list_lock, flags);
 		}
+
+		dev->archdata.dma_ops = &amd_iommu_dma_ops;
+
+		dev_data = get_dev_data(dev);
 
 		dev->archdata.dma_ops = &amd_iommu_dma_ops;
 

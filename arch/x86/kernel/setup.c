@@ -1138,6 +1138,7 @@ void __init setup_arch(char **cmdline_p)
 	arch_init_ideal_nops();
 
 #ifdef CONFIG_EFI
+<<<<<<< HEAD
 	/* Once setup is done above, unmap the EFI memory map on
 	 * mismatched firmware/kernel archtectures since there is no
 	 * support for runtime services.
@@ -1146,6 +1147,16 @@ void __init setup_arch(char **cmdline_p)
 	    IS_ENABLED(CONFIG_X86_64) != efi_enabled(EFI_64BIT)) {
 		pr_info("efi: Setup done, disabling due to 32/64-bit mismatch\n");
 		efi_unmap_memmap();
+=======
+	/* Once setup is done above, disable efi_enabled on mismatched
+	 * firmware/kernel archtectures since there is no support for
+	 * runtime services.
+	 */
+	if (efi_enabled && IS_ENABLED(CONFIG_X86_64) != efi_64bit) {
+		pr_info("efi: Setup done, disabling due to 32/64-bit mismatch\n");
+		efi_unmap_memmap();
+		efi_enabled = 0;
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	}
 #endif
 }

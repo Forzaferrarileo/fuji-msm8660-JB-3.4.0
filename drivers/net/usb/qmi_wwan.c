@@ -345,6 +345,7 @@ static int qmi_wwan_bind_shared(struct usbnet *dev, struct usb_interface *intf)
 	/* save subdriver struct for suspend/resume wrappers */
 	dev->data[0] = (unsigned long)subdriver;
 
+<<<<<<< HEAD
 	/* Never use the same address on both ends of the link, even
 	 * if the buggy firmware told us to.
 	 */
@@ -357,6 +358,8 @@ static int qmi_wwan_bind_shared(struct usbnet *dev, struct usb_interface *intf)
 		dev->net->dev_addr[0] &= 0xbf;	/* clear "IP" bit */
 	}
 	dev->net->netdev_ops = &qmi_wwan_netdev_ops;
+=======
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 err:
 	return rv;
 }
@@ -438,10 +441,23 @@ static const struct driver_info	qmi_wwan_force_int0 = {
 	.data		= BIT(0), /* interface whitelist bitmap */
 };
 
+<<<<<<< HEAD
+=======
+static const struct driver_info	qmi_wwan_force_int0 = {
+	.description	= "Qualcomm WWAN/QMI device",
+	.flags		= FLAG_WWAN,
+	.bind		= qmi_wwan_bind_shared,
+	.unbind		= qmi_wwan_unbind_shared,
+	.manage_power	= qmi_wwan_manage_power,
+	.data		= BIT(0), /* interface whitelist bitmap */
+};
+
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 static const struct driver_info	qmi_wwan_force_int1 = {
 	.description	= "Qualcomm WWAN/QMI device",
 	.flags		= FLAG_WWAN,
 	.bind		= qmi_wwan_bind_shared,
+<<<<<<< HEAD
 	.unbind		= qmi_wwan_unbind_shared,
 	.manage_power	= qmi_wwan_manage_power,
 	.data		= BIT(1), /* interface whitelist bitmap */
@@ -453,6 +469,19 @@ static const struct driver_info qmi_wwan_force_int2 = {
 	.bind		= qmi_wwan_bind_shared,
 	.unbind		= qmi_wwan_unbind_shared,
 	.manage_power	= qmi_wwan_manage_power,
+=======
+	.unbind		= qmi_wwan_unbind_shared,
+	.manage_power	= qmi_wwan_manage_power,
+	.data		= BIT(1), /* interface whitelist bitmap */
+};
+
+static const struct driver_info qmi_wwan_force_int2 = {
+	.description	= "Qualcomm WWAN/QMI device",
+	.flags		= FLAG_WWAN,
+	.bind		= qmi_wwan_bind_shared,
+	.unbind		= qmi_wwan_unbind_shared,
+	.manage_power	= qmi_wwan_manage_power,
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	.data		= BIT(2), /* interface whitelist bitmap */
 };
 

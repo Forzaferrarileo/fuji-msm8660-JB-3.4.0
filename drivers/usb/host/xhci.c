@@ -466,7 +466,11 @@ static bool compliance_mode_recovery_timer_quirk_check(void)
 	if (strstr(dmi_product_name, "Z420") ||
 			strstr(dmi_product_name, "Z620") ||
 			strstr(dmi_product_name, "Z820") ||
+<<<<<<< HEAD
 			strstr(dmi_product_name, "Z1 Workstation"))
+=======
+			strstr(dmi_product_name, "Z1"))
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 		return true;
 
 	return false;
@@ -1079,11 +1083,14 @@ int xhci_resume(struct xhci_hcd *xhci, bool hibernated)
 	if (xhci->quirks & XHCI_COMP_MODE_QUIRK)
 		compliance_mode_recovery_timer_init(xhci);
 
+<<<<<<< HEAD
 	/* Re-enable port polling. */
 	xhci_dbg(xhci, "%s: starting port polling.\n", __func__);
 	set_bit(HCD_FLAG_POLL_RH, &hcd->flags);
 	usb_hcd_poll_rh_status(hcd);
 
+=======
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	return retval;
 }
 #endif	/* CONFIG_PM */

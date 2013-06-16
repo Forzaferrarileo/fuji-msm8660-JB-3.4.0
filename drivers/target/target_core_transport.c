@@ -1751,8 +1751,11 @@ static void target_complete_tmr_failure(struct work_struct *work)
 
 	se_cmd->se_tmr_req->response = TMR_LUN_DOES_NOT_EXIST;
 	se_cmd->se_tfo->queue_tm_rsp(se_cmd);
+<<<<<<< HEAD
 
 	transport_cmd_check_stop_to_fabric(se_cmd);
+=======
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 }
 
 /**

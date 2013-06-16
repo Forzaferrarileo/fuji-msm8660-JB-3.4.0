@@ -218,7 +218,11 @@ int udl_handle_damage(struct udl_framebuffer *fb, int x, int y,
 		if (udl_render_hline(dev, bpp, &urb,
 				     (char *) fb->obj->vmapping,
 				     &cmd, byte_offset, dev_byte_offset,
+<<<<<<< HEAD
 				     (x2 - x + 1) * bpp,
+=======
+				     width * bpp,
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 				     &bytes_identical, &bytes_sent))
 			goto error;
 	}

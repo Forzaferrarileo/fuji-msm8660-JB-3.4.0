@@ -1054,6 +1054,10 @@ static void l2cap_conn_ready(struct l2cap_conn *conn)
 	struct l2cap_chan_list *l = &conn->chan_list;
 	struct sock *sk;
 	struct hci_conn *hcon = conn->hcon;
+<<<<<<< HEAD
+=======
+	struct l2cap_chan *chan;
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 
 	BT_DBG("conn %p", conn);
 
@@ -1085,6 +1089,11 @@ static void l2cap_conn_ready(struct l2cap_conn *conn)
 
 			bh_unlock_sock(sk);
 		}
+<<<<<<< HEAD
+=======
+	} else if (conn->hcon->type == LE_LINK) {
+		smp_conn_security(hcon, hcon->pending_sec_level);
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	}
 
 	read_unlock(&l->lock);

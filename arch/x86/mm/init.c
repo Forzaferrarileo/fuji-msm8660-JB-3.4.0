@@ -45,11 +45,15 @@ static void __init find_early_table_space(struct map_range *mr, int nr_range)
 	int i;
 	unsigned long puds = 0, pmds = 0, ptes = 0, tables;
 	unsigned long start = 0, good_end;
+<<<<<<< HEAD
 	unsigned long pgd_extra = 0;
+=======
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	phys_addr_t base;
 
 	for (i = 0; i < nr_range; i++) {
 		unsigned long range, extra;
+<<<<<<< HEAD
 
 		if ((mr[i].end >> PGDIR_SHIFT) - (mr[i].start >> PGDIR_SHIFT))
 			pgd_extra++;
@@ -64,6 +68,19 @@ static void __init find_early_table_space(struct map_range *mr, int nr_range)
 			pmds += (range + PMD_SIZE - 1) >> PMD_SHIFT;
 		}
 
+=======
+
+		range = mr[i].end - mr[i].start;
+		puds += (range + PUD_SIZE - 1) >> PUD_SHIFT;
+
+		if (mr[i].page_size_mask & (1 << PG_LEVEL_1G)) {
+			extra = range - ((range >> PUD_SHIFT) << PUD_SHIFT);
+			pmds += (extra + PMD_SIZE - 1) >> PMD_SHIFT;
+		} else {
+			pmds += (range + PMD_SIZE - 1) >> PMD_SHIFT;
+		}
+
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 		if (mr[i].page_size_mask & (1 << PG_LEVEL_2M)) {
 			extra = range - ((range >> PMD_SHIFT) << PMD_SHIFT);
 #ifdef CONFIG_X86_32

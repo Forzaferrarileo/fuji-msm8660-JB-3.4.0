@@ -1016,6 +1016,7 @@ int dpm_suspend_end(pm_message_t state)
 	error = dpm_suspend_noirq(state);
 	if (error) {
 		dpm_resume_early(resume_event(state));
+<<<<<<< HEAD
 		return error;
 	}
 	if (error)
@@ -1024,6 +1025,8 @@ int dpm_suspend_end(pm_message_t state)
 	error = dpm_suspend_noirq(state);
 	if (error) {
 		dpm_resume_early(state);
+=======
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 		return error;
 	}
 

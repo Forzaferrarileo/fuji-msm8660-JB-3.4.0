@@ -65,11 +65,17 @@ EXPORT_SYMBOL(efi);
 
 struct efi_memory_map memmap;
 
+<<<<<<< HEAD
+=======
+bool efi_64bit;
+
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 static struct efi efi_phys __initdata;
 static efi_system_table_t efi_systab __initdata;
 
 static inline bool efi_is_native(void)
 {
+<<<<<<< HEAD
 	return IS_ENABLED(CONFIG_X86_64) == efi_enabled(EFI_64BIT);
 }
 
@@ -85,6 +91,11 @@ int efi_enabled(int facility)
 EXPORT_SYMBOL(efi_enabled);
 
 static bool disable_runtime = false;
+=======
+	return IS_ENABLED(CONFIG_X86_64) == efi_64bit;
+}
+
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 static int __init setup_noefi(char *arg)
 {
 	disable_runtime = true;
@@ -432,7 +443,10 @@ void __init efi_reserve_boot_services(void)
 
 void __init efi_unmap_memmap(void)
 {
+<<<<<<< HEAD
 	clear_bit(EFI_MEMMAP, &x86_efi_facility);
+=======
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	if (memmap.map) {
 		early_iounmap(memmap.map, memmap.nr_map * memmap.desc_size);
 		memmap.map = NULL;
@@ -909,7 +923,11 @@ void __init efi_enter_virtual_mode(void)
 	 *
 	 * Call EFI services through wrapper functions.
 	 */
+<<<<<<< HEAD
 	efi.runtime_version = efi_systab.hdr.revision;
+=======
+	efi.runtime_version = efi_systab.fw_revision;
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	efi.get_time = virt_efi_get_time;
 	efi.set_time = virt_efi_set_time;
 	efi.get_wakeup_time = virt_efi_get_wakeup_time;

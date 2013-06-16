@@ -911,10 +911,17 @@ struct ceph_osdmap *osdmap_apply_incremental(void **p, void *end,
 			(void) __remove_pg_mapping(&map->pg_temp, pgid);
 
 			/* insert */
+<<<<<<< HEAD
 			err = -EINVAL;
 			if (pglen > (UINT_MAX - sizeof(*pg)) / sizeof(u32))
 				goto bad;
 			err = -ENOMEM;
+=======
+			if (pglen > (UINT_MAX - sizeof(*pg)) / sizeof(u32)) {
+				err = -EINVAL;
+				goto bad;
+			}
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 			pg = kmalloc(sizeof(*pg) + sizeof(u32)*pglen, GFP_NOFS);
 			if (!pg)
 				goto bad;

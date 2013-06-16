@@ -562,7 +562,11 @@ void ceph_con_open(struct ceph_connection *con,
 	mutex_lock(&con->mutex);
 	dout("con_open %p %s\n", con, ceph_pr_addr(&addr->in_addr));
 
+<<<<<<< HEAD
 	WARN_ON(con->state != CON_STATE_CLOSED);
+=======
+	BUG_ON(con->state != CON_STATE_CLOSED);
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	con->state = CON_STATE_PREOPEN;
 
 	con->peer_name.type = (__u8) entity_type;
@@ -837,6 +841,7 @@ static struct ceph_auth_handshake *get_connect_authorizer(struct ceph_connection
 						int *auth_proto)
 {
 	struct ceph_auth_handshake *auth;
+<<<<<<< HEAD
 
 	if (!con->ops->get_authorizer) {
 		con->out_connect.authorizer_protocol = CEPH_AUTH_UNKNOWN;
@@ -844,6 +849,15 @@ static struct ceph_auth_handshake *get_connect_authorizer(struct ceph_connection
 		return NULL;
 	}
 
+=======
+
+	if (!con->ops->get_authorizer) {
+		con->out_connect.authorizer_protocol = CEPH_AUTH_UNKNOWN;
+		con->out_connect.authorizer_len = 0;
+		return NULL;
+	}
+
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	/* Can't hold the mutex while getting authorizer */
 	mutex_unlock(&con->mutex);
 	auth = con->ops->get_authorizer(con, auth_proto, con->auth_retry);
@@ -1503,6 +1517,16 @@ static int process_banner(struct ceph_connection *con)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static void fail_protocol(struct ceph_connection *con)
+{
+	reset_connection(con);
+	BUG_ON(con->state != CON_STATE_NEGOTIATING);
+	con->state = CON_STATE_CLOSED;
+}
+
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 static int process_connect(struct ceph_connection *con)
 {
 	u64 sup_feat = con->msgr->supported_features;
@@ -1625,7 +1649,11 @@ static int process_connect(struct ceph_connection *con)
 			return -1;
 		}
 
+<<<<<<< HEAD
 		WARN_ON(con->state != CON_STATE_NEGOTIATING);
+=======
+		BUG_ON(con->state != CON_STATE_NEGOTIATING);
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 		con->state = CON_STATE_OPEN;
 
 		con->peer_global_seq = le32_to_cpu(con->in_reply.global_seq);
@@ -2122,6 +2150,10 @@ more:
 		if (ret < 0)
 			goto out;
 
+<<<<<<< HEAD
+=======
+		BUG_ON(con->state != CON_STATE_CONNECTING);
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 		con->state = CON_STATE_NEGOTIATING;
 
 		/*
@@ -2149,7 +2181,11 @@ more:
 		goto more;
 	}
 
+<<<<<<< HEAD
 	WARN_ON(con->state != CON_STATE_OPEN);
+=======
+	BUG_ON(con->state != CON_STATE_OPEN);
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 
 	if (con->in_base_pos < 0) {
 		/*
@@ -2291,8 +2327,29 @@ static void con_work(struct work_struct *work)
 
 	mutex_lock(&con->mutex);
 restart:
+<<<<<<< HEAD
 	if (con_sock_closed(con))
 		goto fault;
+=======
+	if (test_and_clear_bit(CON_FLAG_SOCK_CLOSED, &con->flags)) {
+		switch (con->state) {
+		case CON_STATE_CONNECTING:
+			con->error_msg = "connection failed";
+			break;
+		case CON_STATE_NEGOTIATING:
+			con->error_msg = "negotiation failed";
+			break;
+		case CON_STATE_OPEN:
+			con->error_msg = "socket closed";
+			break;
+		default:
+			dout("unrecognized con state %d\n", (int)con->state);
+			con->error_msg = "unrecognized con state";
+			BUG();
+		}
+		goto fault;
+	}
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 
 	if (test_and_clear_bit(CON_FLAG_BACKOFF, &con->flags)) {
 		dout("con_work %p backing off\n", con);
@@ -2363,7 +2420,11 @@ static void ceph_fault(struct ceph_connection *con)
 	dout("fault %p state %lu to peer %s\n",
 	     con, con->state, ceph_pr_addr(&con->peer_addr.in_addr));
 
+<<<<<<< HEAD
 	WARN_ON(con->state != CON_STATE_CONNECTING &&
+=======
+	BUG_ON(con->state != CON_STATE_CONNECTING &&
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	       con->state != CON_STATE_NEGOTIATING &&
 	       con->state != CON_STATE_OPEN);
 

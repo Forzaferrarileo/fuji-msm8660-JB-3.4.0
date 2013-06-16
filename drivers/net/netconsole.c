@@ -641,11 +641,24 @@ restart:
 				 * we might sleep in __netpoll_cleanup()
 				 * rtnl_lock already held
 				 */
+<<<<<<< HEAD
 				spin_unlock_irqrestore(&target_list_lock, flags);
 				__netpoll_cleanup(&nt->np);
 				spin_lock_irqsave(&target_list_lock, flags);
 				dev_put(nt->np.dev);
 				nt->np.dev = NULL;
+=======
+				if (nt->np.dev) {
+					spin_unlock_irqrestore(
+							      &target_list_lock,
+							      flags);
+					__netpoll_cleanup(&nt->np);
+					spin_lock_irqsave(&target_list_lock,
+							  flags);
+					dev_put(nt->np.dev);
+					nt->np.dev = NULL;
+				}
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 				nt->enabled = 0;
 				stopped = true;
 				netconsole_target_put(nt);

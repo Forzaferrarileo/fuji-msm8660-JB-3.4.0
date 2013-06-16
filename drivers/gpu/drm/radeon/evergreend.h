@@ -77,10 +77,13 @@
 
 #define	CONFIG_MEMSIZE					0x5428
 
+<<<<<<< HEAD
 #define	BIF_FB_EN						0x5490
 #define		FB_READ_EN					(1 << 0)
 #define		FB_WRITE_EN					(1 << 1)
 
+=======
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 #define	CP_STRMOUT_CNTL					0x84FC
 
 #define	CP_COHER_CNTL					0x85F0

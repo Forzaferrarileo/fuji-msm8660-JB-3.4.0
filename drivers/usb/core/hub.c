@@ -2289,9 +2289,52 @@ static int hub_port_wait_reset(struct usb_hub *hub, int port1,
 		if (ret < 0)
 			return ret;
 
+<<<<<<< HEAD
 		/* The port state is unknown until the reset completes. */
 		if ((portstatus & USB_PORT_STAT_RESET))
 			goto delay;
+=======
+		/*
+		 * Some buggy devices require a warm reset to be issued even
+		 * when the port appears not to be connected.
+		 */
+		if (!warm) {
+			/*
+			 * Some buggy devices can cause an NEC host controller
+			 * to transition to the "Error" state after a hot port
+			 * reset.  This will show up as the port state in
+			 * "Inactive", and the port may also report a
+			 * disconnect.  Forcing a warm port reset seems to make
+			 * the device work.
+			 *
+			 * See https://bugzilla.kernel.org/show_bug.cgi?id=41752
+			 */
+			if (hub_port_warm_reset_required(hub, portstatus)) {
+				int ret;
+
+				if ((portchange & USB_PORT_STAT_C_CONNECTION))
+					clear_port_feature(hub->hdev, port1,
+							USB_PORT_FEAT_C_CONNECTION);
+				if (portchange & USB_PORT_STAT_C_LINK_STATE)
+					clear_port_feature(hub->hdev, port1,
+							USB_PORT_FEAT_C_PORT_LINK_STATE);
+				if (portchange & USB_PORT_STAT_C_RESET)
+					clear_port_feature(hub->hdev, port1,
+							USB_PORT_FEAT_C_RESET);
+				dev_dbg(hub->intfdev, "hot reset failed, warm reset port %d\n",
+						port1);
+				ret = hub_port_reset(hub, port1,
+						udev, HUB_BH_RESET_TIME,
+						true);
+				if ((portchange & USB_PORT_STAT_C_CONNECTION))
+					clear_port_feature(hub->hdev, port1,
+							USB_PORT_FEAT_C_CONNECTION);
+				return ret;
+			}
+			/* Device went away? */
+			if (!(portstatus & USB_PORT_STAT_CONNECTION))
+				return -ENOTCONN;
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 
 		if (hub_port_warm_reset_required(hub, portstatus))
 			return -ENOTCONN;
@@ -2702,6 +2745,10 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
 				(void) usb_disable_function_remotewakeup(udev);
 
 		}
+
+		/* Try to enable USB2 hardware LPM again */
+		if (udev->usb2_hw_lpm_capable == 1)
+			usb_set_usb2_hardware_lpm(udev, 1);
 
 		/* Try to enable USB2 hardware LPM again */
 		if (udev->usb2_hw_lpm_capable == 1)
@@ -4197,10 +4244,13 @@ static void hub_events(void)
 			 * SS.Inactive state.
 			 */
 			if (hub_port_warm_reset_required(hub, portstatus)) {
+<<<<<<< HEAD
 				int status;
 				struct usb_device *udev =
 					hub->hdev->children[i - 1];
 
+=======
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 				dev_dbg(hub_dev, "warm reset port %d\n", i);
 				if (!udev) {
 					status = hub_port_reset(hub, i,

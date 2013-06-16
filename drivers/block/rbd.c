@@ -176,11 +176,16 @@ struct rbd_device {
 	struct rw_semaphore     header_rwsem;
 	/* name of the snapshot this device reads from */
 	char                    snap_name[RBD_MAX_SNAP_NAME_LEN];
+<<<<<<< HEAD
 	/* id of the snapshot this device reads from */
 	u64                     snap_id;	/* current snapshot id */
 	/* whether the snap_id this device reads from still exists */
 	bool                    snap_exists;
 	bool			read_only;
+=======
+	u64                     snap_id;	/* current snapshot id */
+	int read_only;
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 
 	struct list_head	node;
 
@@ -609,8 +614,12 @@ static int rbd_header_set_snap(struct rbd_device *dev, u64 *size)
 		else
 			snapc->seq = 0;
 		dev->snap_id = CEPH_NOSNAP;
+<<<<<<< HEAD
 		dev->snap_exists = false;
 		dev->read_only = dev->rbd_client->rbd_opts->read_only;
+=======
+		dev->read_only = 0;
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 		if (size)
 			*size = header->image_size;
 	} else {
@@ -618,8 +627,12 @@ static int rbd_header_set_snap(struct rbd_device *dev, u64 *size)
 		if (ret < 0)
 			goto done;
 		dev->snap_id = snapc->seq;
+<<<<<<< HEAD
 		dev->snap_exists = true;
 		dev->read_only = true;	/* No choice for snapshots */
+=======
+		dev->read_only = 1;
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	}
 
 	ret = 0;
@@ -1599,6 +1612,60 @@ out_dh:
 	return rc;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * create a snapshot
+ */
+static int rbd_header_add_snap(struct rbd_device *dev,
+			       const char *snap_name,
+			       gfp_t gfp_flags)
+{
+	int name_len = strlen(snap_name);
+	u64 new_snapid;
+	int ret;
+	void *data, *p, *e;
+	u64 ver;
+	struct ceph_mon_client *monc;
+
+	/* we should create a snapshot only if we're pointing at the head */
+	if (dev->snap_id != CEPH_NOSNAP)
+		return -EINVAL;
+
+	monc = &dev->rbd_client->client->monc;
+	ret = ceph_monc_create_snapid(monc, dev->poolid, &new_snapid);
+	dout("created snapid=%lld\n", new_snapid);
+	if (ret < 0)
+		return ret;
+
+	data = kmalloc(name_len + 16, gfp_flags);
+	if (!data)
+		return -ENOMEM;
+
+	p = data;
+	e = data + name_len + 16;
+
+	ceph_encode_string_safe(&p, e, snap_name, name_len, bad);
+	ceph_encode_64_safe(&p, e, new_snapid, bad);
+
+	ret = rbd_req_sync_exec(dev, dev->obj_md_name, "rbd", "snap_add",
+				data, p - data, &ver);
+
+	kfree(data);
+
+	if (ret < 0)
+		return ret;
+
+	down_write(&dev->header_rwsem);
+	dev->header.snapc->seq = new_snapid;
+	up_write(&dev->header_rwsem);
+
+	return 0;
+bad:
+	return -ERANGE;
+}
+
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 static void __rbd_remove_all_snaps(struct rbd_device *rbd_dev)
 {
 	struct rbd_snap *snap;

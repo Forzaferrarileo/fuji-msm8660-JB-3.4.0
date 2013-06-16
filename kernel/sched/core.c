@@ -2305,6 +2305,7 @@ calc_load(unsigned long load, unsigned long exp, unsigned long active)
  */
 static atomic_long_t calc_load_idle[2];
 static int calc_load_idx;
+<<<<<<< HEAD
 
 static inline int calc_load_write_idx(void)
 {
@@ -2333,6 +2334,36 @@ static inline int calc_load_read_idx(void)
 
 void calc_load_enter_idle(void)
 {
+=======
+
+static inline int calc_load_write_idx(void)
+{
+	int idx = calc_load_idx;
+
+	/*
+	 * See calc_global_nohz(), if we observe the new index, we also
+	 * need to observe the new update time.
+	 */
+	smp_rmb();
+
+	/*
+	 * If the folding window started, make sure we start writing in the
+	 * next idle-delta.
+	 */
+	if (!time_before(jiffies, calc_load_update))
+		idx++;
+
+	return idx & 1;
+}
+
+static inline int calc_load_read_idx(void)
+{
+	return calc_load_idx & 1;
+}
+
+void calc_load_enter_idle(void)
+{
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	struct rq *this_rq = this_rq();
 	long delta;
 
@@ -2350,6 +2381,7 @@ void calc_load_enter_idle(void)
 void calc_load_exit_idle(void)
 {
 	struct rq *this_rq = this_rq();
+<<<<<<< HEAD
 
 	/*
 	 * If we're still before the sample window, we're done.
@@ -2362,6 +2394,20 @@ void calc_load_exit_idle(void)
 	 * accounted through the nohz accounting, so skip the entire deal and
 	 * sync up for the next window.
 	 */
+=======
+
+	/*
+	 * If we're still before the sample window, we're done.
+	 */
+	if (time_before(jiffies, this_rq->calc_load_update))
+		return;
+
+	/*
+	 * We woke inside or after the sample window, this means we're already
+	 * accounted through the nohz accounting, so skip the entire deal and
+	 * sync up for the next window.
+	 */
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	this_rq->calc_load_update = calc_load_update;
 	if (time_before(jiffies, this_rq->calc_load_update + 10))
 		this_rq->calc_load_update += LOAD_FREQ;

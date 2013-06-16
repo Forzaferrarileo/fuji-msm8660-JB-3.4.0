@@ -3070,6 +3070,10 @@ int ext4_calculate_overhead(struct super_block *sb)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 static int ext4_fill_super(struct super_block *sb, void *data, int silent)
 {
 	char *orig_data = kstrdup(data, GFP_KERNEL);
@@ -3662,6 +3666,18 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
 	set_task_ioprio(sbi->s_journal->j_task, journal_ioprio);
 
 	sbi->s_journal->j_commit_callback = ext4_journal_commit_callback;
+
+	/*
+	 * Get the # of file system overhead blocks from the
+	 * superblock if present.
+	 */
+	if (es->s_overhead_clusters)
+		sbi->s_overhead = le32_to_cpu(es->s_overhead_clusters);
+	else {
+		ret = ext4_calculate_overhead(sb);
+		if (ret)
+			goto failed_mount_wq;
+	}
 
 	/*
 	 * The journal may have updated the bg summary counts, so we
@@ -4560,7 +4576,10 @@ static int ext4_statfs(struct dentry *dentry, struct kstatfs *buf)
 	ext4_fsblk_t overhead = 0;
 	u64 fsid;
 	s64 bfree;
+<<<<<<< HEAD
 
+=======
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	if (!test_opt(sb, MINIX_DF))
 		overhead = sbi->s_overhead;
 

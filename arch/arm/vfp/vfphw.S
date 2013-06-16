@@ -167,7 +167,11 @@ vfp_hw_state_valid:
 					@ else it's one 32-bit instruction, so
 					@ always subtract 4 from the following
 					@ instruction address.
+<<<<<<< HEAD
 #ifdef CONFIG_PREEMPT_COUNT
+=======
+#ifdef CONFIG_PREEMPT
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	get_thread_info	r10
 	ldr	r4, [r10, #TI_PREEMPT]	@ get preempt count
 	sub	r11, r4, #1		@ decrement it

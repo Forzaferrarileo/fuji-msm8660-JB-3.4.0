@@ -206,24 +206,26 @@ int walk_page_range(unsigned long addr, unsigned long end,
 		next = pgd_addr_end(addr, end);
 
 		/*
-		 * handle hugetlb vma individually because pagetable walk for
-		 * the hugetlb page is dependent on the architecture and
-		 * we can't handled it in the same manner as non-huge pages.
+	         * handle hugetlb vma individually because pagetable walk for
+	         * the hugetlb page is dependent on the architecture and
+ 	         * we can't handled it in the same manner as non-huge pages.
 		 */
 		vma = hugetlb_vma(addr, walk);
 		if (vma) {
+			/*
+			 * There are no page structures backing a VM_PFNMAP
+			 * range, so do not allow split_huge_page_pmd().
+			 */
 			if (vma->vm_end < next)
 				next = vma->vm_end;
-			/*
-			 * Hugepage is very tightly coupled with vma, so
-			 * walk through hugetlb entries within a given vma.
-			 */
-			err = walk_hugetlb_range(vma, addr, next, walk);
-			if (err)
+			}
+		        err = walk_hugetlb_range(vma, addr, next, walk);
+		        if (err)
 				break;
 			pgd = pgd_offset(walk->mm, next);
-			continue;
+		        continue; 
 		}
+}
 
 		if (pgd_none_or_clear_bad(pgd)) {
 			if (walk->pte_hole)
@@ -245,4 +247,3 @@ int walk_page_range(unsigned long addr, unsigned long end,
 
 	return err;
 }
-

@@ -400,7 +400,10 @@ void r700_cp_fini(struct radeon_device *rdev);
 struct evergreen_mc_save {
 	u32 vga_render_control;
 	u32 vga_hdp_control;
+<<<<<<< HEAD
 	bool crtc_enabled[RADEON_MAX_CRTCS];
+=======
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 };
 
 void evergreen_pcie_gart_tlb_flush(struct radeon_device *rdev);

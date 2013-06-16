@@ -615,9 +615,13 @@ int snd_usb_autoresume(struct snd_usb_audio *chip)
 	int err = -ENODEV;
 
 	down_read(&chip->shutdown_rwsem);
+<<<<<<< HEAD
 	if (chip->probing)
 		err = 0;
 	else if (!chip->shutdown)
+=======
+	if (!chip->shutdown && !chip->probing)
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 		err = usb_autopm_get_interface(chip->pm_intf);
 	up_read(&chip->shutdown_rwsem);
 

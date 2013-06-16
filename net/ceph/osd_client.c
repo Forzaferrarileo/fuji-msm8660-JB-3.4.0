@@ -640,7 +640,10 @@ static struct ceph_osd *create_osd(struct ceph_osd_client *osdc, int onum)
 	atomic_set(&osd->o_ref, 1);
 	osd->o_osdc = osdc;
 	osd->o_osd = onum;
+<<<<<<< HEAD
 	RB_CLEAR_NODE(&osd->o_node);
+=======
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 	INIT_LIST_HEAD(&osd->o_requests);
 	INIT_LIST_HEAD(&osd->o_linger_requests);
 	INIT_LIST_HEAD(&osd->o_osd_lru);
@@ -1282,6 +1285,7 @@ static void kick_requests(struct ceph_osd_client *osdc, int force_resend)
 	for (p = rb_first(&osdc->requests); p; ) {
 		req = rb_entry(p, struct ceph_osd_request, r_node);
 		p = rb_next(p);
+<<<<<<< HEAD
 
 		/*
 		 * For linger requests that have not yet been
@@ -1300,6 +1304,8 @@ static void kick_requests(struct ceph_osd_client *osdc, int force_resend)
 			continue;
 		}
 
+=======
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 		err = __map_request(osdc, req, force_resend);
 		if (err < 0)
 			continue;  /* error */
@@ -1313,6 +1319,20 @@ static void kick_requests(struct ceph_osd_client *osdc, int force_resend)
 				     req->r_osd ? req->r_osd->o_osd : -1);
 				req->r_flags |= CEPH_OSD_FLAG_RETRY;
 			}
+<<<<<<< HEAD
+=======
+		}
+		if (req->r_linger && list_empty(&req->r_linger_item)) {
+			/*
+			 * register as a linger so that we will
+			 * re-submit below and get a new tid
+			 */
+			dout("%p tid %llu restart on osd%d\n",
+			     req, req->r_tid,
+			     req->r_osd ? req->r_osd->o_osd : -1);
+			__register_linger_request(osdc, req);
+			__unregister_request(osdc, req);
+>>>>>>> parent of 548aff8... revert linux 3.4.20
 		}
 	}
 
