@@ -457,8 +457,8 @@ return count; \
 
 show_hotplug_param(hotplug_freq, 1, 1);
 show_hotplug_param(hotplug_freq, 2, 0);
-show_hotplug_param(hotplug_freq, 2, 1);
 #ifdef CONFIG_CPU_EXYNOS4210
+show_hotplug_param(hotplug_freq, 2, 1);
 show_hotplug_param(hotplug_freq, 3, 0);
 show_hotplug_param(hotplug_freq, 3, 1);
 show_hotplug_param(hotplug_freq, 4, 0);
@@ -466,8 +466,8 @@ show_hotplug_param(hotplug_freq, 4, 0);
 
 show_hotplug_param(hotplug_rq, 1, 1);
 show_hotplug_param(hotplug_rq, 2, 0);
-show_hotplug_param(hotplug_rq, 2, 1);
 #ifdef CONFIG_CPU_EXYNOS4210
+show_hotplug_param(hotplug_rq, 2, 1);
 show_hotplug_param(hotplug_rq, 3, 0);
 show_hotplug_param(hotplug_rq, 3, 1);
 show_hotplug_param(hotplug_rq, 4, 0);
@@ -475,8 +475,8 @@ show_hotplug_param(hotplug_rq, 4, 0);
 
 store_hotplug_param(hotplug_freq, 1, 1);
 store_hotplug_param(hotplug_freq, 2, 0);
-store_hotplug_param(hotplug_freq, 2, 1);
 #ifdef CONFIG_CPU_EXYNOS4210
+store_hotplug_param(hotplug_freq, 2, 1);
 store_hotplug_param(hotplug_freq, 3, 0);
 store_hotplug_param(hotplug_freq, 3, 1);
 store_hotplug_param(hotplug_freq, 4, 0);
@@ -484,8 +484,8 @@ store_hotplug_param(hotplug_freq, 4, 0);
 
 store_hotplug_param(hotplug_rq, 1, 1);
 store_hotplug_param(hotplug_rq, 2, 0);
-store_hotplug_param(hotplug_rq, 2, 1);
 #ifdef CONFIG_CPU_EXYNOS4210
+store_hotplug_param(hotplug_rq, 2, 1);
 store_hotplug_param(hotplug_rq, 3, 0);
 store_hotplug_param(hotplug_rq, 3, 1);
 store_hotplug_param(hotplug_rq, 4, 0);
@@ -493,8 +493,8 @@ store_hotplug_param(hotplug_rq, 4, 0);
 
 define_one_global_rw(hotplug_freq_1_1);
 define_one_global_rw(hotplug_freq_2_0);
-define_one_global_rw(hotplug_freq_2_1);
 #ifdef CONFIG_CPU_EXYNOS4210
+define_one_global_rw(hotplug_freq_2_1);
 define_one_global_rw(hotplug_freq_3_0);
 define_one_global_rw(hotplug_freq_3_1);
 define_one_global_rw(hotplug_freq_4_0);
@@ -502,8 +502,8 @@ define_one_global_rw(hotplug_freq_4_0);
 
 define_one_global_rw(hotplug_rq_1_1);
 define_one_global_rw(hotplug_rq_2_0);
-define_one_global_rw(hotplug_rq_2_1);
 #ifdef CONFIG_CPU_EXYNOS4210
+define_one_global_rw(hotplug_rq_2_1);
 define_one_global_rw(hotplug_rq_3_0);
 define_one_global_rw(hotplug_rq_3_1);
 define_one_global_rw(hotplug_rq_4_0);
@@ -651,7 +651,7 @@ dbs_tuners_ins.cpu_down_rate = min(input, MAX_HOTPLUG_RATE);
 return count;
 }
 
-#ifdef CONFIG_CPU_EXYNOS4210
+
 static ssize_t store_up_nr_cpus(struct kobject *a, struct attribute *b,
 const char *buf, size_t count)
 {
@@ -663,7 +663,7 @@ return -EINVAL;
 dbs_tuners_ins.up_nr_cpus = min(input, num_possible_cpus());
 return count;
 }
-#endif
+
 
 static ssize_t store_max_cpu_lock(struct kobject *a, struct attribute *b,
 const char *buf, size_t count)
@@ -758,9 +758,7 @@ define_one_global_rw(down_differential);
 define_one_global_rw(freq_step);
 define_one_global_rw(cpu_up_rate);
 define_one_global_rw(cpu_down_rate);
-#ifdef CONFIG_CPU_EXYNOS4210
 define_one_global_rw(up_nr_cpus);
-#endif
 define_one_global_rw(max_cpu_lock);
 define_one_global_rw(hotplug_lock);
 define_one_global_rw(dvfs_debug);
@@ -778,25 +776,23 @@ static struct attribute *dbs_attributes[] = {
 &freq_step.attr,
 &cpu_up_rate.attr,
 &cpu_down_rate.attr,
-#ifdef CONFIG_CPU_EXYNOS4210
 &up_nr_cpus.attr,
-#endif
 /* priority: hotplug_lock > max_cpu_lock */
 &max_cpu_lock.attr,
 &hotplug_lock.attr,
 &dvfs_debug.attr,
 &hotplug_freq_1_1.attr,
 &hotplug_freq_2_0.attr,
-&hotplug_freq_2_1.attr,
 #ifdef CONFIG_CPU_EXYNOS4210
+&hotplug_freq_2_1.attr,
 &hotplug_freq_3_0.attr,
 &hotplug_freq_3_1.attr,
 &hotplug_freq_4_0.attr,
 #endif
 &hotplug_rq_1_1.attr,
 &hotplug_rq_2_0.attr,
-&hotplug_rq_2_1.attr,
 #ifdef CONFIG_CPU_EXYNOS4210
+&hotplug_rq_2_1.attr,
 &hotplug_rq_3_0.attr,
 &hotplug_rq_3_1.attr,
 &hotplug_rq_4_0.attr,
@@ -1195,7 +1191,7 @@ cancel_delayed_work_sync(&dbs_info->work);
 cancel_work_sync(&dbs_info->up_work);
 cancel_work_sync(&dbs_info->down_work);
 }
-/*
+
 static int pm_notifier_call(struct notifier_block *this,
 unsigned long event, void *ptr)
 {
@@ -1222,7 +1218,7 @@ return NOTIFY_DONE;
 static struct notifier_block pm_notifier = {
 .notifier_call = pm_notifier_call,
 };
-*/
+
 static int reboot_notifier_call(struct notifier_block *this,
 unsigned long code, void *_cmd)
 {
@@ -1434,4 +1430,5 @@ fs_initcall(cpufreq_gov_dbs_init);
 module_init(cpufreq_gov_dbs_init);
 #endif
 module_exit(cpufreq_gov_dbs_exit);
+
 
