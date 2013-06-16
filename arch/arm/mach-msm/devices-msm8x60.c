@@ -735,7 +735,7 @@ static struct msm_bus_vectors grp2d0_nominal_low_vectors[] = {
 		.ab = 0,
 		.ib = KGSL_CONVERT_TO_MBPS(990),
 	},
-}
+};
 
 static struct msm_bus_vectors grp2d0_nominal_vectors[] = {
 	{
