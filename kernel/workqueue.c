@@ -1862,7 +1862,6 @@ __acquires(&gcwq->lock)
 	if (unlikely(cpu_intensive))
 		worker_set_flags(worker, WORKER_CPU_INTENSIVE, true);
 
-	smp_wmb();	/* paired with test_and_set_bit(PENDING) */	
 	spin_unlock_irq(&gcwq->lock);
 
 	smp_wmb();	/* paired with test_and_set_bit(PENDING) */
@@ -3589,6 +3588,7 @@ static int workqueue_cpu_callback(struct notifier_block *nfb,
 
 	return notifier_from_errno(0);
 }
+
 /*
  * Workqueues should be brought up before normal priority CPU notifiers.
  * This will be registered high priority CPU notifier.
@@ -3624,41 +3624,6 @@ static int workqueue_cpu_down_callback(struct notifier_block *nfb,
 	return NOTIFY_OK;
 }
 
-/*
- * Workqueues should be brought up before normal priority CPU notifiers.
- * This will be registered high priority CPU notifier.
- */
-static int __devinit workqueue_cpu_up_callback(struct notifier_block *nfb,
-					       unsigned long action,
-					       void *hcpu)
-{
-	switch (action & ~CPU_TASKS_FROZEN) {
-	case CPU_UP_PREPARE:
-	case CPU_UP_CANCELED:
-	case CPU_DOWN_FAILED:
-	case CPU_ONLINE:
-		return workqueue_cpu_callback(nfb, action, hcpu);
-	}
-	return NOTIFY_OK;
-}
-
-/*
- * Workqueues should be brought down after normal priority CPU notifiers.
- * This will be registered as low priority CPU notifier.
- */
-static int __devinit workqueue_cpu_down_callback(struct notifier_block *nfb,
-						 unsigned long action,
-						 void *hcpu)
-{
-	switch (action & ~CPU_TASKS_FROZEN) {
-	case CPU_DOWN_PREPARE:
-	case CPU_DYING:
-	case CPU_POST_DEAD:
-		return workqueue_cpu_callback(nfb, action, hcpu);
-	}
-	return NOTIFY_OK;
-}
-
 #ifdef CONFIG_SMP
 
 struct work_for_cpu {
@@ -3671,10 +3636,7 @@ struct work_for_cpu {
 static void work_for_cpu_fn(struct work_struct *work)
 {
 	struct work_for_cpu *wfc = container_of(work, struct work_for_cpu, work);
-<<<<<<< HEAD
-=======
 
->>>>>>> 3af4a71... Linux 3.4.48
 	wfc->ret = wfc->fn(wfc->arg);
 }
 
