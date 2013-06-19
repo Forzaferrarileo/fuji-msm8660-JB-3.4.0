@@ -4223,6 +4223,7 @@ static struct platform_device *fuji_devices[] __initdata = {
 	&ion_dev,
 #endif
 	&msm8660_device_watchdog,
+	&msm8660_cpu_idle_device, 
 	&msm_device_tz_log,
 	&msm_rtb_device,
 	&msm8660_iommu_domain_device,
