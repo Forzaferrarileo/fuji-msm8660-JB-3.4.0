@@ -447,3 +447,5 @@ extern struct platform_device msm8930_device_acpuclk;
 extern struct platform_device msm8930aa_device_acpuclk;
 extern struct platform_device msm8960_device_acpuclk;
 extern struct platform_device msm9615_device_acpuclk;
+
+extern struct platform_device msm8660_cpu_idle_device; 
