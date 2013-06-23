@@ -42,6 +42,15 @@ config CPU_FREQ_STAT_DETAILS
 
 	  If in doubt, say N.
 
+config QUAD_CORES_SOC_STAT
+	bool "Overall statistic details for quadcore SOCs"
+	depends on CPU_FREQ_STAT
+	default n
+	help
+	  This will show overall CPU frequency statistics via sysfs.
+          If this option is not set, it defaults to dual core stats
+ 
+
 choice
 	prompt "Default CPUFreq governor"
 	default CPU_FREQ_DEFAULT_GOV_USERSPACE if CPU_FREQ_SA1100 || CPU_FREQ_SA1110
@@ -87,11 +96,6 @@ config CPU_FREQ_DEFAULT_GOV_HOTPLUG
 	    support the hotplug governor. If unsure have a look at
 	    the help section of the driver. Fallback governor will be the
 	    performance governor.
-
- 
-config CPU_FREQ_DEFAULT_GOV_PEGASUSQ
-	bool "pegasusq"
-	select CPU_FREQ_GOV_PEGASUSQ
 
 config CPU_FREQ_DEFAULT_GOV_PERFORMANCE
 	bool "performance"
@@ -175,7 +179,7 @@ config CPU_FREQ_GOV_BADASS_2_PHASE
 
 config CPU_FREQ_GOV_BADASS_2_PHASE_FREQ
 	int "'2-phase' badass frequency"
-	default 918000
+	default 972000
 	depends on CPU_FREQ_GOV_BADASS
 	depends on CPU_FREQ_GOV_BADASS_2_PHASE
 
@@ -188,7 +192,7 @@ config CPU_FREQ_GOV_BADASS_3_PHASE
 
 config CPU_FREQ_GOV_BADASS_3_PHASE_FREQ
 	int "'3-phase' badass frequency"
-	default 1188000
+	default 1296000
 	depends on CPU_FREQ_GOV_BADASS
 	depends on CPU_FREQ_GOV_BADASS_2_PHASE
 	depends on CPU_FREQ_GOV_BADASS_3_PHASE
@@ -242,10 +246,6 @@ config CPU_FREQ_GOV_HOTPLUG
          'ondemand' instead.
 
          If in doubt, say N.
- 
-
-config CPU_FREQ_GOV_PEGASUSQ
-	tristate "'pegasusq' cpufreq policy governor"
 
 config CPU_FREQ_GOV_PERFORMANCE
 	tristate "'performance' governor"
