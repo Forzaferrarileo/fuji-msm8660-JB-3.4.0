@@ -71,12 +71,6 @@ config CPU_FREQ_DEFAULT_GOV_BADASS
 	  governor. If unsure have a look at the help section of the
 	  driver. Fallback governor will be the performance governor.
 
-
-config CPU_FREQ_DEFAULT_GOV_NIGHTMARE
-	bool "nightmare"
-	select CPU_FREQ_GOV_NIGHTMARE
-	help
-
 config CPU_FREQ_DEFAULT_GOV_LIONHEART
 	bool "lionheart"
 	select CPU_FREQ_GOV_LIONHEART
@@ -216,10 +210,6 @@ config CPU_FREQ_GOV_BADASS_ALLOW_BYPASS
 	depends on CPU_FREQ_GOV_BADASS_2_PHASE
 	help
 		'allow_bypass' - This driver adds a bypass to the phases
-
-config CPU_FREQ_GOV_NIGHTMARE
-	tristate "'nightmare' cpufreq governor"
-	depends on CPU_FREQ
 
 config CPU_FREQ_GOV_LIONHEART
 	tristate "lionheart"
