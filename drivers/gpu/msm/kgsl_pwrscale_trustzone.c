@@ -163,6 +163,7 @@ static int simple_governor(struct kgsl_device *device, int idle_stat)
 			/* already maxed, so do nothing */
       			return 0;
 		else if ((pwr->active_pwrlevel > 0) &&
+			(pwr->active_pwrlevel <= (pwr->num_pwrlevels - 1))) 
 			/* bump up to next pwrlevel */
 			return -1; 
 	}
@@ -271,7 +272,7 @@ static int tz_init(struct kgsl_device *device, struct kgsl_pwrscale *pwrscale)
 	if (pwrscale->priv == NULL)
 		return -ENOMEM;
 
-	priv->governor = TZ_GOVERNOR_SIMPLE;
+	priv->governor = TZ_GOVERNOR_ONDEMAND;
 	spin_lock_init(&tz_lock);
 	kgsl_pwrscale_policy_add_files(device, pwrscale, &tz_attr_group);
 
