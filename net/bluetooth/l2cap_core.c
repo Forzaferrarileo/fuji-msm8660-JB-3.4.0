@@ -1029,6 +1029,7 @@ static void l2cap_le_conn_ready(struct l2cap_conn *conn)
 	write_lock_bh(&list->lock);
 
 	hci_conn_hold(conn->hcon);
+	conn->hcon->disc_timeout = HCI_DISCONN_TIMEOUT;
 
 	l2cap_sock_init(sk, parent);
 	bacpy(&bt_sk(sk)->src, conn->src);
@@ -1052,10 +1053,11 @@ static void l2cap_conn_ready(struct l2cap_conn *conn)
 {
 	struct l2cap_chan_list *l = &conn->chan_list;
 	struct sock *sk;
+	struct hci_conn *hcon = conn->hcon;
 
 	BT_DBG("conn %p", conn);
 
-	if (!conn->hcon->out && conn->hcon->type == LE_LINK)
+	if (!hcon->out && hcon->type == LE_LINK)
 		l2cap_le_conn_ready(conn);
 
 	read_lock(&l->lock);
@@ -1071,9 +1073,6 @@ static void l2cap_conn_ready(struct l2cap_conn *conn)
 				if (pending_sec > sec_level)
 					sec_level = pending_sec;
 
-				if (smp_conn_security(conn, sec_level))
-					l2cap_chan_ready(sk);
-
 				hci_conn_put(conn->hcon);
 
 			} else if (sk->sk_type != SOCK_SEQPACKET &&
@@ -1086,14 +1085,12 @@ static void l2cap_conn_ready(struct l2cap_conn *conn)
 
 			bh_unlock_sock(sk);
 		}
-	} else if (conn->hcon->type == LE_LINK) {
-		smp_conn_security(conn, BT_SECURITY_HIGH);
 	}
 
 	read_unlock(&l->lock);
 
-	if (conn->hcon->out && conn->hcon->type == LE_LINK)
-		l2cap_le_conn_ready(conn);
+	if (hcon->out && hcon->type == LE_LINK)
+		smp_conn_security(hcon, hcon->pending_sec_level);
 }
 
 /* Notify sockets that we cannot guaranty reliability anymore */
@@ -4006,38 +4003,38 @@ static int l2cap_finish_amp_move(struct sock *sk)
 }
 
 static int l2cap_amp_move_reconf_rsp(struct sock *sk, void *rsp, int len,
-					u16 result)
+u16 result)
 {
-	int err = 0;
-	struct l2cap_conf_rfc rfc = {.mode = L2CAP_MODE_BASIC};
-	struct l2cap_pinfo *pi = l2cap_pi(sk);
+int err = 0;
+struct l2cap_conf_rfc rfc = {.mode = L2CAP_MODE_BASIC};
+struct l2cap_pinfo *pi = l2cap_pi(sk);
 
-	BT_DBG("sk %p, rsp %p, len %d, res 0x%2.2x", sk, rsp, len, result);
+BT_DBG("sk %p, rsp %p, len %d, res 0x%2.2x", sk, rsp, len, result);
 
-	if (pi->reconf_state == L2CAP_RECONF_NONE)
-		return -ECONNREFUSED;
+if (pi->reconf_state == L2CAP_RECONF_NONE)
+return -ECONNREFUSED;
 
-	if (result == L2CAP_CONF_SUCCESS) {
-		while (len >= L2CAP_CONF_OPT_SIZE) {
-			int type, olen;
-			unsigned long val;
+if (result == L2CAP_CONF_SUCCESS) {
+while (len >= L2CAP_CONF_OPT_SIZE) {
+int type, olen;
+unsigned long val;
 
-			len -= l2cap_get_conf_opt(&rsp, &type, &olen, &val);
+len -= l2cap_get_conf_opt(&rsp, &type, &olen, &val);
 
-			if (type == L2CAP_CONF_RFC) {
-				if (olen == sizeof(rfc))
-					memcpy(&rfc, (void *)val, olen);
+if (type == L2CAP_CONF_RFC) {
+if (olen == sizeof(rfc))
+memcpy(&rfc, (void *)val, olen);
 
-				if (rfc.mode != pi->mode) {
-					l2cap_send_disconn_req(pi->conn, sk,
-								ECONNRESET);
-					return -ECONNRESET;
-				}
+if (rfc.mode != pi->mode) {
+l2cap_send_disconn_req(pi->conn, sk,
+ECONNRESET);
+return -ECONNRESET;
+}
 
-				goto done;
-			}
-		}
-	}
+goto done;
+}
+}
+}
 
 	BT_ERR("Expected RFC option was missing, using existing values");
 
@@ -7877,3 +7874,4 @@ MODULE_PARM_DESC(enable_hs, "Enable A2MP protocol");
 
 module_param(enable_reconfig, bool, 0644);
 MODULE_PARM_DESC(enable_reconfig, "Enable reconfig after initiating AMP move");
+
