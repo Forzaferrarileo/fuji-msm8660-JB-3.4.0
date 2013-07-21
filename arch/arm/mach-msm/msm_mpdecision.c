@@ -46,7 +46,7 @@
 #define MSM_MPDEC_STARTDELAY            20000
 #define MSM_MPDEC_DELAY                 130
 #define MSM_MPDEC_PAUSE                 10000
-#define MSM_MPDEC_IDLE_FREQ             84000
+#define MSM_MPDEC_IDLE_FREQ             486000
 #ifdef CONFIG_MSM_MPDEC_INPUTBOOST_CPUMIN
 #define MSM_MPDEC_BOOSTTIME             1000
 #define MSM_MPDEC_BOOSTFREQ_CPU0        918000
@@ -1099,7 +1099,7 @@ static int __init msm_mpdec_init(void) {
         per_cpu(msm_mpdec_cpudata, cpu).times_cpu_unplugged = 0;
         per_cpu(msm_mpdec_cpudata, cpu).times_cpu_hotplugged = 0;
 #ifdef CONFIG_MSM_MPDEC_INPUTBOOST_CPUMIN
-        per_cpu(msm_mpdec_cpudata, cpu).norm_min_freq = CONFIG_MSM_CPU_FREQ_MIN;
+        per_cpu(msm_mpdec_cpudata, cpu).norm_min_freq = 30000 ;
         switch (cpu) {
             case 0:
             case 1:
