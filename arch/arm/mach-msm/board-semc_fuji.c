@@ -115,6 +115,8 @@
 
 #include <mach/simple_remote_msm8x60_pf.h>
 
+#include <linux/msm_tsens.h>
+
 #include "devices.h"
 #include "devices-msm8x60.h"
 #include <mach/cpuidle.h>
@@ -3612,10 +3614,19 @@ static struct platform_device *early_devices[] __initdata = {
 	&msm_device_dmov_adm1,
 };
 
+static struct tsens_platform_data pyr_tsens_pdata  = {
+	.tsens_factor    = 1000,
+	.hw_type    = MSM_8660,
+	.tsens_num_sensor  = 5,
+};
+
+/*
+
 static struct platform_device msm_tsens_device = {
 	.name   = "tsens-tm",
 	.id = -1,
 };
+*/
 
 #ifdef CONFIG_SENSORS_MSM_ADC
 
@@ -4221,7 +4232,7 @@ static struct platform_device *fuji_devices[] __initdata = {
 #ifdef CONFIG_SEMC_CHARGER_CRADLE_ARCH
 	&semc_chg_cradle,
 #endif
-	&msm_tsens_device,
+	//&msm_tsens_device,
 	&msm8660_rpm_device,
 #ifdef CONFIG_FUJI_GPIO_KEYPAD
 	&gpio_key_device,
@@ -7959,7 +7970,7 @@ static struct msm_board_data msm8x60_fuji_board_data __initdata = {
 
 static void __init msm8x60_init(struct msm_board_data *board_data)
 {
-	uint32_t soc_platform_version;
+	uint32_t soc_platform_version; 
 
 	pmic_reset_irq = PM8058_IRQ_BASE + PM8058_RESOUT_IRQ;
 	/*
@@ -8019,6 +8030,7 @@ static void __init msm8x60_init(struct msm_board_data *board_data)
 	hw_id_class_init();
 	msm8x60_init_uart7dm();
 	msm8x60_init_uart12dm();
+
 #ifdef CONFIG_MSM_CAMERA_V4L2
 	msm8x60_init_cam();
 #endif
