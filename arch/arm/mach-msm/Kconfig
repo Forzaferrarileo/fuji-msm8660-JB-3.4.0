@@ -9,7 +9,13 @@ config MSM8660_OC
 config CPU_VOLTAGE_TABLE
 	bool "Enable CPU Voltage Table via sysfs for adjustements"
 	default n
- 
+
+config FORCE_FAST_CHARGE
+	bool "Force AC charge mode at will"
+	default n
+	help
+	  A simple sysfs interface to force adapters that
+	  are detected as USB to charge as AC. 
 
 config ARCH_MSM7X01A
 	bool "MSM7x00A / MSM7x01A"

@@ -38,6 +38,11 @@
 #include <linux/usb/host_ext_event.h>
 #endif
 
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
+#define USB_FASTCHG_LOAD 1000 /* uA */
+#endif 
+
 #define MSM_USB_BASE	(dev->regs)
 #define USB_LINK_RESET_TIMEOUT	(msecs_to_jiffies(10))
 #define DRIVER_NAME	"msm_otg"
@@ -606,6 +611,23 @@ static int msm_otg_set_power(struct usb_phy *xceiv, unsigned mA)
 		charge = USB_IDCHG_MAX;
 	else if (pdata->chg_drawable_ida && test_bit(ID_A, &dev->inputs))
 		charge = pdata->chg_drawable_ida;
+
+
+#ifdef CONFIG_FORCE_FAST_CHARGE
+	if (force_fast_charge == 1) {
+		// DooMLoRD: dont override charging current if available current is greater
+		if (charge >= USB_FASTCHG_LOAD){
+			pr_info("Available current already greater than USB fastcharging current!!!\n");
+			pr_info("Override of USB charging current cancelled.\n");
+		} else {
+		charge = USB_FASTCHG_LOAD;
+		pr_info("USB fast charging is ON!!!\n");
+		}
+    
+	} else {
+	pr_info("USB fast charging is OFF.\n");
+	}
+#endif
 
 	pr_info("Charging with %dmA current\n", charge);
 	/* Call vbus_draw only if the charger is of known type and also
